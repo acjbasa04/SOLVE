@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Search, Mail, Phone, MoreHorizontal, UserPlus, Loader2, X, Trash2 } from "lucide-react";
+import { Plus, Search, Mail, Phone, MoreHorizontal, UserPlus, Loader2, X, Trash2, Upload, Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -15,6 +15,8 @@ export default function TeamDirectoryManager() {
   const [position, setPosition] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchMembers();
@@ -22,16 +24,41 @@ export default function TeamDirectoryManager() {
 
   const fetchMembers = async () => {
     setLoading(true);
-    const { data } = await supabase.from("team_members").select("*").order("order_index", { ascending: true });
+    const { data } = await supabase.from("team_members").select("*").order("created_at", { ascending: false });
     if (data) setMembers(data);
     setLoading(false);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      setImageUrl(data.publicUrl);
+    } catch (error: any) {
+      alert("Error uploading image: " + error.message + "\n\nNote: Please ensure you have created a public bucket named 'avatars' in your Supabase storage.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     const { error } = await supabase.from("team_members").insert([
-      { full_name: fullName, position, email, phone }
+      { full_name: fullName, position, email, phone, image_url: imageUrl }
     ]);
     if (!error) {
       setIsModalOpen(false);
@@ -39,6 +66,7 @@ export default function TeamDirectoryManager() {
       setPosition("");
       setEmail("");
       setPhone("");
+      setImageUrl("");
       fetchMembers();
     }
     setSaving(false);
@@ -91,7 +119,11 @@ export default function TeamDirectoryManager() {
               <div className="flex justify-between items-start mb-6">
                 <div className="relative">
                   <div className="w-24 h-24 bg-emerald-50 rounded-[2rem] overflow-hidden border-4 border-white shadow-lg flex items-center justify-center">
-                    <span className="text-emerald-700 font-bold text-2xl">{member.full_name[0].toUpperCase()}</span>
+                    {member.image_url ? (
+                      <img src={member.image_url} alt={member.full_name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-emerald-700 font-bold text-2xl">{member.full_name[0].toUpperCase()}</span>
+                    )}
                   </div>
                 </div>
                 <button className="text-slate-300 hover:text-slate-600 p-2 transition-colors">
@@ -143,6 +175,32 @@ export default function TeamDirectoryManager() {
             </div>
             
             <form onSubmit={handleAddMember} className="p-8 space-y-6">
+              {/* Profile Photo Upload */}
+              <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50/50 gap-4 group hover:border-emerald-500/50 transition-all">
+                {imageUrl ? (
+                  <div className="relative">
+                    <img src={imageUrl} alt="Preview" className="w-24 h-24 rounded-[1.5rem] object-cover shadow-lg" />
+                    <button 
+                      type="button"
+                      onClick={() => setImageUrl("")}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-lg hover:bg-red-600 transition-all"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer flex flex-col items-center gap-2">
+                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-all shadow-sm">
+                      {uploading ? <Loader2 size={24} className="animate-spin" /> : <Camera size={24} />}
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 group-hover:text-emerald-700 transition-all">
+                      {uploading ? "Uploading..." : "Click to Upload Photo"}
+                    </span>
+                    <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" disabled={uploading} />
+                  </label>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Full Name</label>
                 <input 
@@ -186,6 +244,16 @@ export default function TeamDirectoryManager() {
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Or Image URL</label>
+                <input 
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://example.com/photo.jpg"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                />
               </div>
 
               <div className="pt-4 flex gap-4">

@@ -96,19 +96,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ${sidebarOpen ? "lg:w-72" : "lg:w-20"}
         `}
       >
-        <div className="p-6 flex items-center justify-between">
+        <div className="p-6 flex items-center justify-between border-b border-white/5 bg-emerald-900/20">
           <div className={`flex items-center gap-3 ${(!sidebarOpen && !isMobileMenuOpen) && "lg:hidden"}`}>
-            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-emerald-950">
-              <ShieldCheck size={20} />
-            </div>
-            <span className="font-outfit font-black tracking-tight text-xl">SOLVE</span>
+            <img 
+              src="/up-seal.png" 
+              alt="UP Seal" 
+              className="w-8 h-8 object-contain"
+            />
+            <span className="font-outfit font-black tracking-tight text-xl uppercase">SOLVE</span>
           </div>
           <button 
             onClick={() => {
               if (window.innerWidth < 1024) setIsMobileMenuOpen(false);
               else setSidebarOpen(!sidebarOpen);
             }}
-            className="hover:bg-white/10 p-2 rounded-lg transition-colors"
+            className="hover:bg-white/10 p-2 rounded-lg transition-colors text-emerald-100"
           >
             {sidebarOpen || isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>

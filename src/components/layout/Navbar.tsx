@@ -1,17 +1,12 @@
 "use client";
 
-import { ShieldCheck } from "lucide-react";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { ShieldCheck, Menu, X, ArrowRight, Compass } from "lucide-react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
-const navLinks = [
-  { name: "About", href: "#about" },
-  { name: "Mission", href: "#mission" },
-  { name: "Events & News", href: "#events" },
-  { name: "Team", href: "#about-us" },
-];
-
-export function Navbar() {
+export const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,13 +28,19 @@ export function Navbar() {
     }`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-900/20 group-hover:bg-amber-500 transition-all">
-            <ShieldCheck size={24} />
+        <Link href="/" className="flex items-center gap-4 group">
+          <div className="relative w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-105 duration-500">
+            <img 
+              src="/up-seal.png" 
+              alt="University of the Philippines" 
+              className="w-full h-full object-contain"
+            />
           </div>
-          <span className="font-outfit font-black text-2xl tracking-tighter text-emerald-950">
-            S<span className="text-amber-500">O</span>LVE
-          </span>
+          <div className="flex flex-col leading-none">
+            <span className={`font-outfit font-black text-2xl tracking-tighter ${scrolled ? "text-emerald-950" : "text-white"}`}>
+              S<span className="text-amber-500">O</span>LVE
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Links */}
