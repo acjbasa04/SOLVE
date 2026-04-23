@@ -24,21 +24,26 @@ import { supabase } from "@/lib/supabase";
 export default function LandingPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [team, setTeam] = useState<any[]>([]);
+  const [gallery, setGallery] = useState<any[]>([]);
   const [siteContent, setSiteContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [articlesRes, teamRes, contentRes] = await Promise.all([
-        supabase.from("articles").select("*").eq("status", "published").order("created_at", { ascending: false }).limit(3),
-        supabase.from("team_members").select("*").order("order_index", { ascending: true }),
-        supabase.from("site_content").select("*")
-      ]);
+      setLoading(true);
       
-      if (articlesRes.data) setArticles(articlesRes.data);
-      if (teamRes.data) setTeam(teamRes.data);
-      if (contentRes.data) setSiteContent(contentRes.data);
+      const { data: articlesData } = await supabase.from('articles').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(3);
+      const { data: teamData } = await supabase.from('team_members').select('*').order('created_at', { ascending: true });
+      const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false }).limit(8);
+      const { data: contentData } = await supabase.from('site_content').select('*');
+
+      if (articlesData) setArticles(articlesData);
+      if (teamData) setTeam(teamData);
+      if (galleryData) setGallery(galleryData);
+      if (contentData) setSiteContent(contentData);
+      
       setLoading(false);
     };
 
@@ -308,6 +313,55 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* 4. Values in Action - Media Gallery */}
+      <section id="gallery" className="py-32 px-6 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900 tracking-tight">Values in Action</h2>
+              <p className="text-slate-500 text-lg">A visual journey through our institutional values program.</p>
+            </div>
+            <button className="text-emerald-700 font-bold flex items-center gap-2 hover:underline">
+              View Full Gallery <ArrowRight size={18} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {loading ? (
+              [1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                <div key={i} className="aspect-square bg-slate-100 rounded-[2rem] animate-pulse" />
+              ))
+            ) : gallery.length === 0 ? (
+              <div className="col-span-full py-32 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
+                <div className="max-w-xs mx-auto space-y-4">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto text-slate-300">
+                    <Compass size={32} />
+                  </div>
+                  <p className="text-slate-400 font-medium italic">Our institutional archive is being populated. Stay tuned.</p>
+                </div>
+              </div>
+            ) : gallery.map((item, i) => (
+              <div 
+                key={item.id} 
+                onClick={() => setSelectedImage(item.image_url)}
+                className={`group relative rounded-[2rem] overflow-hidden cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-500 ${i % 3 === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+              >
+                <img 
+                  src={item.image_url} 
+                  alt={item.caption || "Values in Action"} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-emerald-950/60 opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
+                  <p className="text-white font-bold text-lg leading-tight transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                    {item.caption || "Institutional Update"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 4. Team - Live Data */}
       <section id="team" className="py-32 px-6 bg-emerald-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10 space-y-20">
@@ -433,6 +487,35 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox Modal */}
+      <AnimatePresence>
+        {selectedImage && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-12">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedImage(null)}
+              className="absolute inset-0 bg-emerald-950/95 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative z-10 max-w-7xl max-h-full"
+            >
+              <button 
+                onClick={() => setSelectedImage(null)}
+                className="absolute -top-16 right-0 text-white/60 hover:text-white flex items-center gap-2 font-bold transition-all"
+              >
+                Close <X size={24} />
+              </button>
+              <img src={selectedImage} alt="Gallery Preview" className="w-full h-full object-contain rounded-3xl shadow-2xl" />
             </motion.div>
           </div>
         )}
