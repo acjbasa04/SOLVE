@@ -33,9 +33,6 @@ export default function ValuesPolicyPage() {
         </div>
         
         <div className="max-w-5xl mx-auto relative z-10 space-y-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-emerald-300 font-bold hover:text-white transition-colors group">
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to SOLVE Hub
-          </Link>
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-widest">
               <ShieldCheck size={14} /> Institutional Governance
