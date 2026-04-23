@@ -17,11 +17,41 @@ export default function NewsEventsManager() {
   const [content, setContent] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [postedBy, setPostedBy] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchPosts();
   }, [activeTab]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    try {
+      setUploading(true);
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `news/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      setImageUrl(publicUrl);
+    } catch (error: any) {
+      alert('Error uploading image: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -48,6 +78,7 @@ export default function NewsEventsManager() {
         content, 
         type, 
         status, 
+        image_url: imageUrl,
         event_date: eventDate || null,
         posted_by: postedBy,
         author_id: session?.user?.id 
@@ -248,6 +279,41 @@ export default function NewsEventsManager() {
                   placeholder="Share the details of this values initiative..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500 transition-all resize-none"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Post Featured Image</label>
+                <div className="flex gap-4">
+                  <input 
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="Paste an image URL or upload a file..."
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500 transition-all"
+                  />
+                  <div className="relative">
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    <button 
+                      type="button"
+                      className="h-full bg-slate-900 text-white px-8 rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all disabled:opacity-50"
+                      disabled={uploading}
+                    >
+                      {uploading ? <Loader2 size={18} className="animate-spin" /> : "Upload File"}
+                    </button>
+                  </div>
+                </div>
+                {imageUrl && (
+                  <div className="mt-4 aspect-video rounded-2xl overflow-hidden border border-slate-100 relative group">
+                    <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <p className="text-white text-xs font-bold uppercase tracking-widest">Image Selected</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="pt-4 flex gap-4">
