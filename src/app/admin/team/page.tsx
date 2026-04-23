@@ -246,10 +246,10 @@ export default function TeamDirectoryManager() {
 
       {/* Add Member Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-emerald-950/20">
-          <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-              <h2 className="text-2xl font-bold text-slate-900 font-outfit">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 backdrop-blur-md bg-emerald-950/20 overflow-y-auto">
+          <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300 my-auto flex flex-col max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50 shrink-0">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 font-outfit">
                 {editingMember ? "Edit Member Profile" : "Add Team Member"}
               </h2>
               <button onClick={closeModal} className="p-2 hover:bg-slate-200 rounded-xl transition-colors">
@@ -257,7 +257,7 @@ export default function TeamDirectoryManager() {
               </button>
             </div>
             
-            <form onSubmit={handleSaveMember} className="p-8 space-y-6">
+            <form onSubmit={handleSaveMember} className="p-6 md:p-8 space-y-6 overflow-y-auto">
               {/* Profile Photo Upload */}
               <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50/50 gap-4 group hover:border-emerald-500/50 transition-all">
                 {imageUrl ? (
@@ -306,7 +306,7 @@ export default function TeamDirectoryManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Institutional Email</label>
                   <input 

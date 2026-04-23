@@ -167,35 +167,36 @@ export default function SiteContentManager() {
         </div>
 
         {/* Editor Form */}
-        <div className="lg:col-span-3">
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+        <div className="lg:col-span-3 min-h-0 flex flex-col">
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col max-h-[calc(100vh-12rem)]">
+            <div className="p-6 md:p-8 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50/50 shrink-0 gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
+                <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl shrink-0">
                   {activeSection.icon}
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">Editing {activeSection.label}</h2>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Section Key: {activeSection.key}</p>
+                  <h2 className="text-lg md:text-xl font-bold text-slate-900">Editing {activeSection.label}</h2>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Section Key: {activeSection.key}</p>
                 </div>
               </div>
               <button 
                 onClick={handleSave}
                 disabled={saving || loading || uploading}
-                className="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all flex items-center gap-2 disabled:opacity-50"
+                className="bg-emerald-600 text-white px-6 md:px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
               >
                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                 Save Changes
               </button>
             </div>
 
-            {loading ? (
-              <div className="p-20 text-center">
-                <Loader2 className="animate-spin mx-auto text-emerald-600 mb-4" size={32} />
-                <p className="text-slate-400 font-medium">Fetching section data...</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSave} className="p-8 space-y-8">
+            <div className="overflow-y-auto flex-1">
+              {loading ? (
+                <div className="p-20 text-center">
+                  <Loader2 className="animate-spin mx-auto text-emerald-600 mb-4" size={32} />
+                  <p className="text-slate-400 font-medium">Fetching section data...</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSave} className="p-6 md:p-8 space-y-8">
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Section Title</label>

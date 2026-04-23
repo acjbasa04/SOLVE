@@ -236,10 +236,10 @@ export default function NewsEventsManager() {
 
       {/* Create Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-emerald-950/20">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-              <h2 className="text-2xl font-bold text-slate-900 font-outfit">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 backdrop-blur-md bg-emerald-950/20 overflow-y-auto">
+          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300 my-auto flex flex-col max-h-[90vh]">
+            <div className="p-6 md:p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50 shrink-0">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 font-outfit">
                 {editingPost ? "Edit Institutional Post" : "Create New Post"}
               </h2>
               <button onClick={() => { setIsModalOpen(false); resetForm(); }} className="p-2 hover:bg-slate-200 rounded-xl transition-colors">
@@ -247,7 +247,7 @@ export default function NewsEventsManager() {
               </button>
             </div>
             
-            <form onSubmit={handleCreateOrUpdate} className="p-8 space-y-6">
+            <form onSubmit={handleCreateOrUpdate} className="p-6 md:p-8 space-y-6 overflow-y-auto flex-1">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Post Title</label>
                 <input 
@@ -259,7 +259,7 @@ export default function NewsEventsManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Content Type</label>
                   <select 
@@ -284,7 +284,7 @@ export default function NewsEventsManager() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Event/Post Date</label>
                   <input 
