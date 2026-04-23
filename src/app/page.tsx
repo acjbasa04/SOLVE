@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { 
   ShieldCheck, 
+  Shield,
   ArrowRight, 
   Compass, 
   Navigation, 
@@ -375,7 +376,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 50, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 50, scale: 0.95 }}
-              className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row h-fit max-h-[90vh]"
+              className="bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row h-fit max-h-[90vh]"
             >
               <button 
                 onClick={() => setSelectedArticle(null)}
@@ -384,18 +385,18 @@ export default function LandingPage() {
                 <X size={20} />
               </button>
 
-              <div className="md:w-1/2 bg-emerald-900 relative">
+              <div className="md:w-1/2 bg-emerald-950 flex items-center justify-center relative p-4">
                 {selectedArticle.image_url ? (
-                  <img src={selectedArticle.image_url} alt={selectedArticle.title} className="w-full h-full object-cover" />
+                  <img src={selectedArticle.image_url} alt={selectedArticle.title} className="w-full h-full object-contain" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Calendar size={80} className="text-white/10" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 to-transparent md:bg-gradient-to-r" />
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/20 to-transparent pointer-events-none" />
               </div>
 
-              <div className="md:w-1/2 p-8 md:p-12 overflow-y-auto space-y-8 bg-white">
+              <div className="md:w-1/2 p-8 md:p-16 overflow-y-auto space-y-10 bg-white">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-emerald-700/50">
                     <span className="flex items-center gap-1.5">
@@ -407,24 +408,24 @@ export default function LandingPage() {
                       {selectedArticle.posted_by || "OVPA"}
                     </span>
                   </div>
-                  <h2 className="text-3xl font-outfit font-black text-slate-900 leading-tight">
+                  <h2 className="text-4xl font-outfit font-black text-slate-900 leading-tight tracking-tight">
                     {selectedArticle.title}
                   </h2>
                 </div>
 
                 <div className="prose prose-slate max-w-none">
-                  <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-wrap">
+                  <p className="text-slate-600 text-xl leading-relaxed whitespace-pre-wrap font-light">
                     {selectedArticle.content}
                   </p>
                 </div>
 
-                <div className="pt-8 border-t border-slate-100 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-emerald-700 rounded-2xl flex items-center justify-center text-white">
-                    <Shield size={24} />
+                <div className="pt-10 border-t border-slate-100 flex items-center gap-5">
+                  <div className="w-14 h-14 bg-emerald-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-700/20">
+                    <ShieldCheck size={28} />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Institutional Record</p>
-                    <p className="text-sm font-bold text-slate-900">Verified by Values Team</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Institutional Record</p>
+                    <p className="text-base font-bold text-slate-900 tracking-tight">Verified by Values Team</p>
                   </div>
                 </div>
               </div>
