@@ -118,9 +118,10 @@ create policy "Resources are viewable by everyone." on public.resources
 -- 6. Team Members
 create table public.team_members (
   id uuid default gen_random_uuid() primary key,
-  name text not null,
-  role text,
-  bio text,
+  full_name text not null,
+  position text,
+  email text,
+  phone text,
   image_url text,
   display_order integer default 0,
   created_at timestamp with time zone default timezone('utc'::text, now())
