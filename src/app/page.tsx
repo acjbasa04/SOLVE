@@ -326,33 +326,33 @@ export default function LandingPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
             {loading ? (
-              [1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                <div key={i} className="aspect-square bg-slate-100 rounded-[2rem] animate-pulse" />
+              [1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="aspect-square bg-slate-100 rounded-2xl animate-pulse" />
               ))
             ) : gallery.length === 0 ? (
-              <div className="col-span-full py-32 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
+              <div className="col-span-full py-20 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
                 <div className="max-w-xs mx-auto space-y-4">
-                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto text-slate-300">
-                    <Compass size={32} />
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto text-slate-300">
+                    <Compass size={24} />
                   </div>
-                  <p className="text-slate-400 font-medium italic">Our institutional archive is being populated. Stay tuned.</p>
+                  <p className="text-slate-400 font-medium text-sm italic">Archive being populated.</p>
                 </div>
               </div>
-            ) : gallery.map((item, i) => (
+            ) : gallery.map((item) => (
               <div 
                 key={item.id} 
                 onClick={() => setSelectedImage(item.image_url)}
-                className={`group relative rounded-[2rem] overflow-hidden cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-500 ${i % 3 === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
               >
                 <img 
                   src={item.image_url} 
                   alt={item.caption || "Values in Action"} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-emerald-950/60 opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
-                  <p className="text-white font-bold text-lg leading-tight transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                <div className="absolute inset-0 bg-emerald-950/80 opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
+                  <p className="text-white font-bold text-[10px] leading-tight uppercase tracking-wider transform translate-y-2 group-hover:translate-y-0 transition-transform">
                     {item.caption || "Institutional Update"}
                   </p>
                 </div>
