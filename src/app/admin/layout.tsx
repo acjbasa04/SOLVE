@@ -66,10 +66,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
+    { name: "Site Content", icon: LayoutDashboard, href: "/admin/settings" },
     { name: "News & Events", icon: Newspaper, href: "/admin/content" },
     { name: "Team Directory", icon: Users, href: "/admin/team" },
     { name: "Media Gallery", icon: ImageIcon, href: "/admin/gallery" },
-    { name: "System Settings", icon: Settings, href: "/admin/settings" },
   ];
 
   return (

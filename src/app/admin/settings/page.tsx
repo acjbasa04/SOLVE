@@ -1,111 +1,185 @@
 "use client";
 
-import { Save, Globe, Shield, Mail, Bell, RefreshCw } from "lucide-react";
+import { Save, Layout, Target, Eye, Loader2, Image as ImageIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
-export default function SettingsPage() {
+const SECTIONS = [
+  { key: 'hero', label: 'Hero Section', icon: <Layout size={18} /> },
+  { key: 'mission', label: 'Mission Statement', icon: <Target size={18} /> },
+  { key: 'vision', label: 'Vision Statement', icon: <Eye size={18} /> },
+  { key: 'values', label: 'Core Values Intro', icon: <Eye size={18} /> },
+];
+
+export default function SiteContentManager() {
+  const [activeSection, setActiveSection] = useState(SECTIONS[0]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  
+  // Form State
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+
+  useEffect(() => {
+    fetchSectionData();
+  }, [activeSection]);
+
+  const fetchSectionData = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("site_content")
+      .select("*")
+      .eq("section_key", activeSection.key)
+      .single();
+
+    if (data) {
+      setTitle(data.title || "");
+      setSubtitle(data.subtitle || "");
+      setContent(data.content || "");
+      setImageUrl(data.image_url || "");
+    } else {
+      // Reset if no data found
+      setTitle("");
+      setSubtitle("");
+      setContent("");
+      setImageUrl("");
+    }
+    setLoading(false);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    
+    const { error } = await supabase
+      .from("site_content")
+      .upsert({
+        section_key: activeSection.key,
+        title,
+        subtitle,
+        content,
+        image_url: imageUrl,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'section_key' });
+
+    if (!error) {
+      alert("Section updated successfully!");
+    } else {
+      alert("Error updating section: " + error.message);
+    }
+    setSaving(false);
+  };
+
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 font-outfit">System Settings</h1>
-          <p className="text-slate-500">Configure platform identity, SEO, and communication channels.</p>
-        </div>
-        <button className="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 hover:-translate-y-0.5 transition-all flex items-center gap-2">
-          <Save size={20} /> Save All Changes
-        </button>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900 font-outfit">Site Content Manager</h1>
+        <p className="text-slate-500">Manage the messaging and visual sections of the landing page.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 space-y-10">
-          {/* General Settings */}
-          <section className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-sm space-y-8">
-            <div className="flex items-center gap-4 text-emerald-700">
-              <div className="p-3 bg-emerald-50 rounded-xl"><Globe size={24} /></div>
-              <h2 className="text-xl font-bold">General Information</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Platform Name</label>
-                <input type="text" defaultValue="SOLVE Platform" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-slate-700 focus:outline-none focus:border-emerald-500" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Contact Email</label>
-                <input type="email" defaultValue="admin@ovpa.edu.ph" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-slate-700 focus:outline-none focus:border-emerald-500" />
-              </div>
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Institutional Mandate</label>
-                <textarea rows={3} defaultValue="Honor and Excellence in Service of the Nation" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-slate-700 focus:outline-none focus:border-emerald-500" />
-              </div>
-            </div>
-          </section>
-
-          {/* Security Settings */}
-          <section className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-sm space-y-8">
-            <div className="flex items-center gap-4 text-amber-600">
-              <div className="p-3 bg-amber-50 rounded-xl"><Shield size={24} /></div>
-              <h2 className="text-xl font-bold">Security & Access</h2>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                <div>
-                  <p className="font-bold text-slate-700">Two-Factor Authentication</p>
-                  <p className="text-sm text-slate-400">Add an extra layer of security to your admin account.</p>
-                </div>
-                <div className="w-12 h-6 bg-slate-200 rounded-full relative cursor-pointer">
-                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full" />
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                <div>
-                  <p className="font-bold text-slate-700">Session Timeout</p>
-                  <p className="text-sm text-slate-400">Automatically log out after 30 minutes of inactivity.</p>
-                </div>
-                <div className="w-12 h-6 bg-emerald-500 rounded-full relative cursor-pointer">
-                  <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
-                </div>
-              </div>
-            </div>
-          </section>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Section Navigation */}
+        <div className="lg:col-span-1 space-y-2">
+          {SECTIONS.map((section) => (
+            <button
+              key={section.key}
+              onClick={() => setActiveSection(section)}
+              className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all ${
+                activeSection.key === section.key 
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" 
+                : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
+              }`}
+            >
+              {section.icon}
+              {section.label}
+            </button>
+          ))}
         </div>
 
-        {/* Sidebar Settings */}
-        <div className="space-y-10">
-          <section className="bg-emerald-950 text-white rounded-[2.5rem] p-8 space-y-6 shadow-xl shadow-emerald-900/20">
-            <div className="flex items-center gap-3">
-              <RefreshCw size={20} className="text-amber-400" />
-              <h3 className="font-bold">System Status</h3>
+        {/* Editor Form */}
+        <div className="lg:col-span-3">
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
+                  {activeSection.icon}
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Editing {activeSection.label}</h2>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Section Key: {activeSection.key}</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleSave}
+                disabled={saving || loading}
+                className="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all flex items-center gap-2 disabled:opacity-50"
+              >
+                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                Save Changes
+              </button>
             </div>
-            <div className="space-y-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-emerald-100/60">Version</span>
-                <span className="font-bold">1.2.4-stable</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-emerald-100/60">Last Backup</span>
-                <span className="font-bold">2 hours ago</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-emerald-100/60">Database</span>
-                <span className="text-emerald-400 font-bold">Connected</span>
-              </div>
-            </div>
-            <button className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-xl font-bold transition-all text-sm">
-              Check for Updates
-            </button>
-          </section>
 
-          <section className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-6">
-            <div className="flex items-center gap-3 text-slate-700">
-              <Bell size={20} />
-              <h3 className="font-bold">Notifications</h3>
-            </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Configure how the system alerts you about new team member registrations or high-priority news comments.
-            </p>
-            <button className="text-emerald-600 font-bold text-sm hover:underline">Configure Alerts</button>
-          </section>
+            {loading ? (
+              <div className="p-20 text-center">
+                <Loader2 className="animate-spin mx-auto text-emerald-600 mb-4" size={32} />
+                <p className="text-slate-400 font-medium">Fetching section data...</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSave} className="p-8 space-y-8">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Section Title</label>
+                    <input 
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter the main heading..."
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Subtitle / Label</label>
+                    <input 
+                      value={subtitle}
+                      onChange={(e) => setSubtitle(e.target.value)}
+                      placeholder="Enter the smaller supporting text..."
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Main Content Body</label>
+                    <textarea 
+                      rows={6}
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="Write the detailed description here..."
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500 resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Featured / Background Image URL</label>
+                    <div className="flex gap-4">
+                      <input 
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                        className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                      />
+                      {imageUrl && (
+                        <div className="w-14 h-14 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 shrink-0">
+                          <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </div>

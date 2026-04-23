@@ -22,22 +22,46 @@ import { supabase } from "@/lib/supabase";
 export default function LandingPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [team, setTeam] = useState<any[]>([]);
+  const [siteContent, setSiteContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [articlesRes, teamRes] = await Promise.all([
+      const [articlesRes, teamRes, contentRes] = await Promise.all([
         supabase.from("articles").select("*").eq("status", "published").order("created_at", { ascending: false }).limit(3),
-        supabase.from("team_members").select("*").order("order_index", { ascending: true })
+        supabase.from("team_members").select("*").order("order_index", { ascending: true }),
+        supabase.from("site_content").select("*")
       ]);
       
       if (articlesRes.data) setArticles(articlesRes.data);
       if (teamRes.data) setTeam(teamRes.data);
+      if (contentRes.data) setSiteContent(contentRes.data);
       setLoading(false);
     };
 
     fetchData();
   }, []);
+
+  const getContent = (key: string, fallback: { title: string, subtitle?: string, content?: string }) => {
+    const section = siteContent.find(s => s.section_key === key);
+    return {
+      title: section?.title || fallback.title,
+      subtitle: section?.subtitle || fallback.subtitle || "",
+      content: section?.content || fallback.content || "",
+      imageUrl: section?.image_url
+    };
+  };
+
+  const hero = getContent('hero', { 
+    title: "Strengthening Organizational Leadership, Values and Ethics",
+    subtitle: "OVPA Initiative",
+    content: '"Honor and Excellence in Service of the Nation"'
+  });
+
+  const mission = getContent('mission', {
+    title: "Our Shared Values",
+    subtitle: "Cultivating a culture of leadership and accountability across all UP constituent universities.",
+  });
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -45,19 +69,28 @@ export default function LandingPage() {
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-emerald-950 px-6 py-24">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#064E3B] via-[#022C22] to-[#0A0505]" />
-          
-          {/* Subtle Moral Compass / Purpose Background Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] aspect-square animate-spin-slow opacity-5">
-            <svg viewBox="0 0 100 100" className="w-full h-full stroke-emerald-500 fill-none stroke-[0.1]">
-              <circle cx="50" cy="50" r="45" />
-              <circle cx="50" cy="50" r="35" strokeDasharray="1 4" />
-              <path d="M50 5 L50 95 M5 50 L95 50" />
-            </svg>
-          </div>
+          {hero.imageUrl ? (
+            <>
+              <img src={hero.imageUrl} alt="Background" className="w-full h-full object-cover opacity-30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/80 to-transparent" />
+            </>
+          ) : (
+            <>
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#064E3B] via-[#022C22] to-[#0A0505]" />
+              
+              {/* Subtle Moral Compass / Purpose Background Glow */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] aspect-square animate-spin-slow opacity-5">
+                <svg viewBox="0 0 100 100" className="w-full h-full stroke-emerald-500 fill-none stroke-[0.1]">
+                  <circle cx="50" cy="50" r="45" />
+                  <circle cx="50" cy="50" r="35" strokeDasharray="1 4" />
+                  <path d="M50 5 L50 95 M5 50 L95 50" />
+                </svg>
+              </div>
 
-          <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-amber-900/20 rounded-full blur-[140px]" />
-          <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[140px]" />
+              <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-amber-900/20 rounded-full blur-[140px]" />
+              <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[140px]" />
+            </>
+          )}
         </div>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto text-center space-y-10">
@@ -68,7 +101,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-bold uppercase tracking-[0.2em] backdrop-blur-xl"
           >
             <ShieldCheck size={18} />
-            OVPA Initiative
+            {hero.subtitle}
           </motion.div>
 
           {/* Headline: SOLVE Acronym Focus */}
@@ -79,11 +112,15 @@ export default function LandingPage() {
               transition={{ delay: 0.1 }}
               className="text-3xl md:text-5xl lg:text-6xl font-outfit font-black text-white tracking-tight leading-[1.1]"
             >
-              <span className="text-amber-400">S</span>trengthening 
-              <span className="text-amber-400"> O</span>rganizational 
-              <span className="text-amber-400"> L</span>eadership, 
-              <span className="text-amber-400"> V</span>alues and 
-              <span className="text-amber-400"> E</span>thics
+              {hero.title === "Strengthening Organizational Leadership, Values and Ethics" ? (
+                <>
+                  <span className="text-amber-400">S</span>trengthening 
+                  <span className="text-amber-400"> O</span>rganizational 
+                  <span className="text-amber-400"> L</span>eadership, 
+                  <span className="text-amber-400"> V</span>alues and 
+                  <span className="text-amber-400"> E</span>thics
+                </>
+              ) : hero.title}
             </motion.h1>
 
             <motion.div
@@ -93,12 +130,14 @@ export default function LandingPage() {
               className="space-y-4"
             >
               <p className="text-2xl md:text-3xl text-amber-200/90 font-outfit italic font-light tracking-wide">
-                "Honor and Excellence in Service of the Nation"
+                {hero.content}
               </p>
-              <p className="max-w-3xl mx-auto text-lg md:text-xl text-emerald-100/60 font-light leading-relaxed">
-                Empowering the UP community to lead with integrity, cultivating a culture 
-                of service that upholds the honor and excellence of our national university.
-              </p>
+              {!hero.imageUrl && (
+                <p className="max-w-3xl mx-auto text-lg md:text-xl text-emerald-100/60 font-light leading-relaxed">
+                  Empowering the UP community to lead with integrity, cultivating a culture 
+                  of service that upholds the honor and excellence of our national university.
+                </p>
+              )}
             </motion.div>
           </div>
 
@@ -165,8 +204,8 @@ export default function LandingPage() {
         <div className="absolute top-0 right-0 w-1/3 h-full bg-emerald-900/5 -skew-x-12" />
         <div className="max-w-7xl mx-auto text-center space-y-16">
           <div className="space-y-4">
-            <h2 className="text-4xl font-outfit font-black text-slate-900">Our Shared Values</h2>
-            <p className="text-slate-500 max-w-2xl mx-auto">Cultivating a culture of leadership and accountability across all UP constituent universities.</p>
+            <h2 className="text-4xl font-outfit font-black text-slate-900">{mission.title}</h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">{mission.subtitle}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
