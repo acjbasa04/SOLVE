@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 export default function LandingPage() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -176,9 +177,9 @@ export default function LandingPage() {
               Connect with Us
               <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-bold py-5 px-12 rounded-2xl border border-white/10 backdrop-blur-xl transition-all active:scale-95 text-lg">
-              Stay Updated
-            </button>
+            <Link href="/policy" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white font-bold py-5 px-12 rounded-2xl border border-white/10 backdrop-blur-xl transition-all active:scale-95 text-lg flex items-center justify-center gap-2">
+              View Values Policy
+            </Link>
           </motion.div>
         </div>
 
