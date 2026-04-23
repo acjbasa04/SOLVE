@@ -64,32 +64,45 @@ export default function SiteContentManager() {
       .eq("section_key", activeSection.key)
       .single();
 
+    // Define site-wide defaults
+    const defaults: Record<string, any> = {
+      hero: {
+        title: "Strengthening Organizational Leadership, Values and Ethics",
+        subtitle: "OVPA Initiative",
+        content: '"Honor and Excellence in Service of the Nation"'
+      },
+      about: {
+        title: "Upholding Honor, Championing Excellence.",
+        subtitle: "For the UP Community",
+        content: "SOLVE is a initiative designed for the dedicated employees of the University of the Philippines System."
+      },
+      mission: {
+        title: "Our Shared Values",
+        subtitle: "Cultivating a culture of leadership and accountability across all UP constituent universities.",
+        content: ""
+      },
+      vision: {
+        title: "Institutional Vision",
+        subtitle: "A Future of Integrity",
+        content: "Leading the national university towards a standard of ethics that inspires the nation."
+      },
+      values: {
+        title: "Core Institutional Values",
+        subtitle: "The SOLVE Pillars",
+        content: "Our foundation is built on the collective commitment of every UP employee."
+      }
+    };
+
+    const fallback = defaults[activeSection.key] || { title: "", subtitle: "", content: "" };
+
     if (data) {
-      setTitle(data.title || "");
-      setSubtitle(data.subtitle || "");
-      setContent(data.content || "");
+      // Use DB data if it exists, otherwise use fallback
+      setTitle(data.title || fallback.title);
+      setSubtitle(data.subtitle || fallback.subtitle);
+      setContent(data.content || fallback.content);
       setImageUrl(data.image_url || "");
     } else {
-      // Fallback to site defaults so the user knows what they are editing
-      const defaults: Record<string, any> = {
-        hero: {
-          title: "Strengthening Organizational Leadership, Values and Ethics",
-          subtitle: "OVPA Initiative",
-          content: '"Honor and Excellence in Service of the Nation"'
-        },
-        about: {
-          title: "Upholding Honor, Championing Excellence.",
-          subtitle: "For the UP Community",
-          content: "SOLVE is a initiative designed for the dedicated employees of the University of the Philippines System."
-        },
-        mission: {
-          title: "Our Shared Values",
-          subtitle: "Cultivating a culture of leadership and accountability across all UP constituent universities.",
-          content: ""
-        }
-      };
-
-      const fallback = defaults[activeSection.key] || { title: "", subtitle: "", content: "" };
+      // No data in DB, use entire fallback
       setTitle(fallback.title);
       setSubtitle(fallback.subtitle);
       setContent(fallback.content);
