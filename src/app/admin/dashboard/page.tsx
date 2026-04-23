@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 
 export default function DashboardOverview() {
   const [counts, setCounts] = useState({ articles: 0, team: 0, gallery: 0 });
+  const [storageUsed, setStorageUsed] = useState(0); // in bytes
   const [recentArticles, setRecentArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,12 +26,27 @@ export default function DashboardOverview() {
     // Fetch Recent Articles
     const { data: latest } = await supabase.from('articles').select('*').order('created_at', { ascending: false }).limit(3);
 
+    // Fetch Storage Usage (Simplified check of main bucket)
+    let totalSize = 0;
+    const { data: files } = await supabase.storage.from('avatars').list('', { limit: 100 });
+    const { data: galFiles } = await supabase.storage.from('avatars').list('gallery', { limit: 100 });
+    const { data: newsFiles } = await supabase.storage.from('avatars').list('news', { limit: 100 });
+    
+    [files, galFiles, newsFiles].forEach(fileGroup => {
+      if (fileGroup) {
+        fileGroup.forEach(f => {
+          if (f.metadata?.size) totalSize += f.metadata.size;
+        });
+      }
+    });
+
     setCounts({
       articles: artCount || 0,
       team: teamCount || 0,
       gallery: galCount || 0
     });
     
+    setStorageUsed(totalSize);
     if (latest) setRecentArticles(latest);
     setLoading(false);
   };
@@ -157,6 +173,26 @@ export default function DashboardOverview() {
                   <div key={i} className="flex-1 h-8 bg-emerald-50 rounded-lg" />
                 ))}
               </div>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-slate-50">
+              <div className="flex justify-between text-xs mb-1 uppercase font-black tracking-widest">
+                <span className="text-slate-400">Storage Allocation</span>
+                <span className={storageUsed > 800000000 ? "text-amber-600" : "text-emerald-600"}>
+                  {(storageUsed / (1024 * 1024)).toFixed(2)} MB / 1 GB
+                </span>
+              </div>
+              <div className="w-full h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100 p-0.5">
+                <div 
+                  className={`h-full rounded-full transition-all duration-1000 ${
+                    storageUsed > 800000000 ? "bg-amber-500" : "bg-emerald-500"
+                  }`}
+                  style={{ width: `${Math.min(100, (storageUsed / (1024 * 1024 * 1024)) * 100)}%` }}
+                />
+              </div>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">
+                {storageUsed > 0 ? "Cloud assets synchronized" : "Initializing storage metrics..."}
+              </p>
             </div>
 
             <div className="pt-6 border-t border-slate-50">
