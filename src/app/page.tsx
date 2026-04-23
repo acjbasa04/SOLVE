@@ -199,7 +199,7 @@ export default function LandingPage() {
           <div className="relative">
             <div className="aspect-square bg-emerald-950 rounded-[4rem] overflow-hidden shadow-2xl flex items-center justify-center relative">
               {about.imageUrl ? (
-                <img src={about.imageUrl} alt="About SOLVE" className="w-full h-full object-cover" />
+                <img src={about.imageUrl} alt="About SOLVE" className="w-full h-full object-contain bg-emerald-900/10" />
               ) : (
                 <>
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 to-transparent" />
