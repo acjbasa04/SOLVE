@@ -21,10 +21,39 @@ export default function SiteContentManager() {
   const [subtitle, setSubtitle] = useState("");
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchSectionData();
   }, [activeSection]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!e.target.files || e.target.files.length === 0) return;
+      
+      setUploading(true);
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${activeSection.key}-${Math.random()}.${fileExt}`;
+      const filePath = `site/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      setImageUrl(publicUrl);
+    } catch (error: any) {
+      alert('Error uploading image: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const fetchSectionData = async () => {
     setLoading(true);
@@ -113,7 +142,7 @@ export default function SiteContentManager() {
               </div>
               <button 
                 onClick={handleSave}
-                disabled={saving || loading}
+                disabled={saving || loading || uploading}
                 className="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all flex items-center gap-2 disabled:opacity-50"
               >
                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
@@ -161,17 +190,33 @@ export default function SiteContentManager() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Featured / Background Image URL</label>
-                    <div className="flex gap-4">
-                      <input 
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                        className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
-                      />
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Section Image</label>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex gap-4">
+                        <input 
+                          value={imageUrl}
+                          onChange={(e) => setImageUrl(e.target.value)}
+                          placeholder="Or paste an image URL..."
+                          className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                        />
+                        <label className="cursor-pointer bg-slate-900 text-white px-6 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all">
+                          <ImageIcon size={18} />
+                          {uploading ? 'Uploading...' : 'Upload File'}
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            disabled={uploading}
+                          />
+                        </label>
+                      </div>
                       {imageUrl && (
-                        <div className="w-14 h-14 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 shrink-0">
+                        <div className="relative w-full aspect-video rounded-3xl border border-slate-200 overflow-hidden bg-slate-50">
                           <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-600 shadow-sm">
+                            Live Preview
+                          </div>
                         </div>
                       )}
                     </div>

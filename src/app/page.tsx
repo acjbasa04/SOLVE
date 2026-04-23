@@ -63,6 +63,12 @@ export default function LandingPage() {
     subtitle: "Cultivating a culture of leadership and accountability across all UP constituent universities.",
   });
 
+  const about = getContent('about', {
+    title: "Upholding Honor, Championing Excellence.",
+    subtitle: "For the UP Community",
+    content: "SOLVE is a initiative designed for the dedicated employees of the University of the Philippines System."
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. Hero Section - Values-Driven / UP Mandate Focus */}
@@ -167,15 +173,15 @@ export default function LandingPage() {
           <div className="space-y-8">
             <div className="inline-flex items-center gap-3 text-emerald-700 font-bold uppercase tracking-widest text-sm">
               <span className="w-12 h-px bg-emerald-700" />
-              For the UP Community
+              {about.subtitle}
             </div>
             <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900 tracking-tight">
-              Upholding <span className="text-emerald-700">Honor</span>,<br /> 
-              Championing <span className="text-amber-600">Excellence</span>.
+              {about.title === "Upholding Honor, Championing Excellence." ? (
+                <>Upholding <span className="text-emerald-700">Honor</span>,<br /> Championing <span className="text-amber-600">Excellence</span>.</>
+              ) : about.title}
             </h2>
             <p className="text-slate-600 text-lg leading-relaxed">
-              SOLVE is a initiative designed for the dedicated employees of the University of the Philippines System. 
-              We believe that our service to the nation begins with the values we embody every day within our offices and campuses.
+              {about.content}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-6">
               <div className="space-y-3 p-8 bg-slate-50 rounded-3xl border border-slate-100 group hover:bg-emerald-50 transition-all">
@@ -191,9 +197,15 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="aspect-square bg-emerald-950 rounded-[4rem] overflow-hidden shadow-2xl flex items-center justify-center p-12 relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 to-transparent" />
-              <Compass size={80} className="text-amber-500/10 animate-spin-slow" />
+            <div className="aspect-square bg-emerald-950 rounded-[4rem] overflow-hidden shadow-2xl flex items-center justify-center relative">
+              {about.imageUrl ? (
+                <img src={about.imageUrl} alt="About SOLVE" className="w-full h-full object-cover" />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 to-transparent" />
+                  <Compass size={80} className="text-amber-500/10 animate-spin-slow" />
+                </>
+              )}
             </div>
           </div>
         </div>
