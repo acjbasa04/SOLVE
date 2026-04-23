@@ -1,19 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldCheck, ChevronRight, FileText, ArrowLeft, Printer, Share2, Compass, Award, Shield } from "lucide-react";
+import { ShieldCheck, ChevronRight, FileText, ArrowLeft, Printer, Share2, Compass, Award, Shield, CheckCircle2, MessageSquare, PhoneCall, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 const SECTIONS = [
-  { id: "preamble", title: "Institutional Preamble", icon: <Compass size={18} /> },
-  { id: "pillars", title: "Core Pillars", icon: <Award size={18} /> },
-  { id: "conduct", title: "Code of Conduct", icon: <Shield size={18} /> },
-  { id: "accountability", title: "Accountability", icon: <ShieldCheck size={18} /> },
+  { id: "overview", title: "Coverage & Basis", icon: <Shield size={18} /> },
+  { id: "honor", title: "Honor & Behaviors", icon: <Award size={18} /> },
+  { id: "excellence", title: "Excellence & Growth", icon: <ShieldCheck size={18} /> },
+  { id: "monitoring", title: "Monitoring & Strategy", icon: <Compass size={18} /> },
 ];
 
 export default function ValuesPolicyPage() {
-  const [activeSection, setActiveSection] = useState("preamble");
+  const [activeSection, setActiveSection] = useState("overview");
 
   const scrollToSection = (id: string) => {
     setActiveSection(id);
@@ -26,7 +26,7 @@ export default function ValuesPolicyPage() {
   return (
     <div className="min-h-screen bg-slate-50 font-outfit">
       {/* Policy Header */}
-      <header className="bg-emerald-950 text-white py-20 px-6 relative overflow-hidden">
+      <header className="bg-emerald-950 text-white py-24 px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500 via-transparent to-transparent" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] aspect-square border border-white rounded-full animate-spin-slow opacity-20" />
@@ -38,25 +38,23 @@ export default function ValuesPolicyPage() {
           </Link>
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-widest">
-              <ShieldCheck size={14} /> Official Institutional Policy
+              <ShieldCheck size={14} /> Institutional Governance
             </div>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-none">
-              Strengthening Organizational Leadership, <br />
-              <span className="text-amber-500 font-outfit italic">Values and Ethics</span>
+            <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-none uppercase">
+              KALINANGÁN
             </h1>
-            <p className="text-emerald-100/60 max-w-2xl text-lg font-light leading-relaxed">
-              The foundational framework governing the ethical standards and leadership 
-              principles of the University of the Philippines System under the SOLVE initiative.
+            <p className="text-emerald-100/80 max-w-2xl text-xl font-light leading-relaxed">
+              A Guide for OVPA Personnel to Embody, Practice, and Cultivate UP’s Core Values of Honor, Excellence, and Service.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-4 pt-4">
-            <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl border border-white/10 transition-all flex items-center gap-2 text-sm font-bold">
-              <Printer size={18} /> Print Document
+            <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl border border-white/10 transition-all flex items-center gap-2 text-sm font-bold backdrop-blur-md">
+              <Printer size={18} /> Print Guide
             </button>
-            <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl border border-white/10 transition-all flex items-center gap-2 text-sm font-bold">
-              <Share2 size={18} /> Share Policy
-            </button>
+            <div className="flex items-center gap-3 px-6 py-3 bg-emerald-900/50 rounded-xl border border-white/5 text-[10px] font-bold uppercase tracking-widest text-emerald-200">
+              <Clock size={14} /> Effective April 2026
+            </div>
           </div>
         </div>
       </header>
@@ -77,7 +75,7 @@ export default function ValuesPolicyPage() {
                     : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 text-sm">
                     {section.icon}
                     {section.title}
                   </div>
@@ -85,12 +83,13 @@ export default function ValuesPolicyPage() {
                 </button>
               ))}
 
-              <div className="mt-12 p-8 bg-emerald-900 rounded-[2rem] text-white space-y-4 shadow-2xl shadow-emerald-950/20">
-                <FileText size={32} className="text-amber-500" />
-                <h4 className="font-bold">Need a PDF?</h4>
-                <p className="text-xs text-emerald-100/60 leading-relaxed">Download the official signed version of the SOLVE Values Policy for your records.</p>
-                <button className="w-full bg-white text-emerald-900 py-3 rounded-xl font-bold text-xs hover:bg-emerald-50 transition-colors">
-                  Download PDF (2.4 MB)
+              <div className="mt-12 p-8 bg-emerald-900 rounded-[2rem] text-white space-y-4 shadow-2xl shadow-emerald-950/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-10 translate-x-10" />
+                <FileText size={32} className="text-amber-500 relative z-10" />
+                <h4 className="font-bold relative z-10">Personnel Copy</h4>
+                <p className="text-xs text-emerald-100/60 leading-relaxed relative z-10">Download the full Kalinangán PDF to keep at your workstation.</p>
+                <button className="w-full bg-white text-emerald-900 py-3 rounded-xl font-bold text-xs hover:bg-emerald-50 transition-colors relative z-10">
+                  Download PDF
                 </button>
               </div>
             </div>
@@ -98,127 +97,224 @@ export default function ValuesPolicyPage() {
 
           {/* Policy Content */}
           <article className="lg:col-span-3 space-y-24">
-            {/* Preamble */}
-            <section id="preamble" className="scroll-mt-32 space-y-8">
-              <h2 className="text-3xl font-black text-slate-900 font-outfit">1. Institutional Preamble</h2>
-              <div className="prose prose-slate max-w-none">
-                <p className="text-xl text-slate-600 leading-relaxed font-light first-letter:text-5xl first-letter:font-black first-letter:text-emerald-700 first-letter:mr-3 first-letter:float-left">
-                  The University of the Philippines, as the national university, is committed to the pursuit 
-                  of truth and the promotion of honor and excellence. The SOLVE (Strengthening Organizational 
-                  Leadership, Values and Ethics) policy serves as the definitive guideline for institutional 
-                  integrity, fostering a culture of accountability and public service across all campuses.
-                </p>
-                <p className="text-slate-500 text-lg leading-relaxed pt-4">
-                  This framework is designed to empower employees to act as Values Champions, 
-                  ensuring that every administrative action and academic endeavor is aligned with the 
-                  highest ethical standards.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
-                <div className="p-8 bg-white border border-slate-100 rounded-[2rem] shadow-sm">
-                  <h4 className="font-bold text-emerald-800 mb-2">Vision</h4>
-                  <p className="text-sm text-slate-500 leading-relaxed italic">"To be the national benchmark for ethical leadership and organizational integrity in public service."</p>
-                </div>
-                <div className="p-8 bg-white border border-slate-100 rounded-[2rem] shadow-sm">
-                  <h4 className="font-bold text-amber-600 mb-2">Mission</h4>
-                  <p className="text-sm text-slate-500 leading-relaxed italic">"Cultivating a community of leaders who champion values and ethics in service of the UP System."</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Pillars */}
-            <section id="pillars" className="scroll-mt-32 space-y-12">
+            {/* Overview */}
+            <section id="overview" className="scroll-mt-32 space-y-10">
               <div className="space-y-4">
-                <h2 className="text-3xl font-black text-slate-900 font-outfit">2. The Core Pillars</h2>
-                <p className="text-slate-400 text-lg">The three strategic foundations of the SOLVE framework.</p>
+                <h2 className="text-3xl font-black text-slate-900 font-outfit uppercase tracking-tight">1. Coverage & Basis</h2>
+                <div className="w-20 h-1.5 bg-amber-500 rounded-full" />
               </div>
               
-              <div className="space-y-6">
-                {[
-                  { title: "Honor and Integrity", desc: "Consistency in values, principles, and actions regardless of external pressure.", detail: "Every UP employee is a steward of the university's reputation. We act with transparency and uncompromising honesty." },
-                  { title: "Service Excellence", desc: "Commitment to the highest quality of service to the university and the public.", detail: "Excellence is not an act, but a habit. We continuously refine our administrative processes to better serve our stakeholders." },
-                  { title: "Collaborative Leadership", desc: "Fostering an environment of shared growth and mutual respect.", detail: "Leadership is a collective responsibility. We empower our colleagues and constitents to lead with empathy and purpose." }
-                ].map((pillar, i) => (
-                  <div key={i} className="bg-white p-10 rounded-[3rem] border border-slate-100 flex flex-col md:flex-row gap-8 hover:shadow-xl transition-all group">
-                    <div className="w-16 h-16 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-emerald-700 group-hover:text-white transition-colors">
-                      <span className="text-2xl font-black">0{i+1}</span>
-                    </div>
-                    <div className="space-y-3">
-                      <h3 className="text-2xl font-bold text-slate-900">{pillar.title}</h3>
-                      <p className="text-emerald-700/60 font-bold text-xs uppercase tracking-widest">{pillar.desc}</p>
-                      <p className="text-slate-500 leading-relaxed pt-2">{pillar.detail}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Code of Conduct */}
-            <section id="conduct" className="scroll-mt-32 space-y-8">
-              <h2 className="text-3xl font-black text-slate-900 font-outfit">3. Code of Conduct</h2>
-              <div className="bg-slate-900 p-12 rounded-[3.5rem] text-white space-y-10 relative overflow-hidden">
-                <ShieldCheck className="absolute top-10 right-10 text-white/5" size={120} />
-                <div className="space-y-4 relative z-10">
-                  <p className="text-amber-500 font-bold uppercase tracking-widest text-xs">Standard of Ethics</p>
-                  <h3 className="text-4xl font-bold tracking-tight">The Values Champion Oath</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-                  <div className="space-y-4">
-                    <p className="text-emerald-100/60 leading-relaxed">
-                      All employees under the SOLVE initiative commit to a rigorous standard of professional conduct, 
-                      ensuring that personal interests never supersede the institutional welfare of the University of the Philippines.
-                    </p>
-                    <ul className="space-y-4 text-sm font-medium">
-                      <li className="flex gap-3"><Shield className="text-amber-500 shrink-0" size={18} /> Zero tolerance for unethical behavior.</li>
-                      <li className="flex gap-3"><Shield className="text-amber-500 shrink-0" size={18} /> Transparent disclosure of conflicts.</li>
-                      <li className="flex gap-3"><Shield className="text-amber-500 shrink-0" size={18} /> Proactive reporting of value violations.</li>
-                    </ul>
-                  </div>
-                  <div className="aspect-square bg-white/5 rounded-[2rem] border border-white/10 flex items-center justify-center p-8">
-                    <p className="text-center italic text-lg text-emerald-100/80">
-                      "I solemnly swear to uphold the honor and excellence of the University, 
-                      to lead with integrity, and to serve as a champion of our shared values."
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Accountability */}
-            <section id="accountability" className="scroll-mt-32 space-y-8">
-              <h2 className="text-3xl font-black text-slate-900 font-outfit">4. Accountability Framework</h2>
-              <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed space-y-6">
-                <p>
-                  Accountability is the bedrock of the SOLVE framework. This section outlines the mechanisms for 
-                  monitoring, reporting, and reinforcing ethical standards within the institution.
-                </p>
-                <div className="p-10 bg-emerald-50 rounded-[2.5rem] border border-emerald-100 flex items-start gap-6">
-                  <div className="p-3 bg-white text-emerald-700 rounded-xl shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-4">
+                  <div className="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center">
                     <ShieldCheck size={24} />
                   </div>
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-slate-900">Governance Oversight</h4>
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                      The Office of the Vice President for Administration (OVPA) serves as the primary governing body 
-                      for the SOLVE initiative, ensuring consistent application of these values across all campuses.
+                  <h3 className="font-bold text-slate-800">Coverage</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    This guide applies to all officials, employees, and contract workers (COS/JO) 
+                    of the University of the Philippines Office of the Vice President for Administration (UP OVPA).
+                  </p>
+                </div>
+                <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-4">
+                  <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+                    <FileText size={24} />
+                  </div>
+                  <h3 className="font-bold text-slate-800">Legal Basis</h3>
+                  <ul className="text-sm text-slate-500 space-y-2">
+                    <li className="flex gap-2 font-medium">
+                      <span className="text-amber-600">•</span> RA No. 6713 (Public Ethics)
+                    </li>
+                    <li className="flex gap-2 font-medium">
+                      <span className="text-amber-600">•</span> RA No. 9500 (UP Charter 2008)
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="prose prose-slate max-w-none">
+                <h4 className="text-xl font-bold text-slate-800">Background and Rationale</h4>
+                <p className="text-slate-600 leading-relaxed text-lg">
+                  The University of the Philippines emphasizes Honor and Excellence in its services. 
+                  This guide aims to help UP OVPA officials, employees, and contract workers uphold 
+                  these values in their daily work. This bottom-up initiative draws on the ideas and 
+                  experiences of individuals in public service, serving as a practical tool for 
+                  achieving these ideals.
+                </p>
+              </div>
+            </section>
+
+            {/* Honor */}
+            <section id="honor" className="scroll-mt-32 space-y-12">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-black text-slate-900 font-outfit uppercase tracking-tight">2. Honor and Behavioral Indicators</h2>
+                <p className="text-slate-500 text-lg">UP OVPA personnel shall demonstrate honor by being empathic, trustworthy, respectful, professional, and honest.</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-8 bg-emerald-950 text-white rounded-[2.5rem] md:col-span-2 flex flex-col md:flex-row items-center gap-8 shadow-2xl shadow-emerald-900/20">
+                  <div className="w-20 h-20 bg-emerald-900 rounded-3xl flex items-center justify-center shrink-0 border border-white/10">
+                    <MessageSquare size={32} className="text-amber-500" />
+                  </div>
+                  <div className="space-y-2 text-center md:text-left">
+                    <h3 className="text-2xl font-bold tracking-tight">The Institutional Greeting</h3>
+                    <p className="text-emerald-100/60 leading-relaxed">
+                      Welcome and greet clients and other staff who enter the office with a smile, saying:
                     </p>
+                    <p className="text-2xl font-black text-amber-500 font-outfit italic">“Happy Morning/Afternoon!”</p>
+                  </div>
+                </div>
+
+                <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-4 border-l-4 border-l-emerald-600">
+                  <div className="flex items-center gap-3 text-emerald-700">
+                    <PhoneCall size={20} />
+                    <h3 className="font-black text-xs uppercase tracking-widest">Phone Protocol</h3>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Answer phone calls on or before the <span className="font-bold text-emerald-700">second ring</span>. 
+                    Greet cheerfully: <span className="italic font-medium">“Happy Morning/Afternoon, OVPA, how may I help you?”</span>
+                  </p>
+                </div>
+
+                <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm space-y-4 border-l-4 border-l-amber-500">
+                  <div className="flex items-center gap-3 text-amber-600">
+                    <Clock size={20} />
+                    <h3 className="font-black text-xs uppercase tracking-widest">Time Management</h3>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Follow agreed working hours. Be punctual, meet deadlines, and prioritize tasks. 
+                    Log in/out using biometrics and maintain accurate DTR records.
+                  </p>
+                </div>
+
+                <div className="p-8 bg-slate-50 rounded-[2.5rem] md:col-span-2 space-y-6">
+                  <h4 className="font-bold text-slate-800 uppercase tracking-widest text-xs px-2">Professional Standards</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      "Observe appropriate office attire (CSC MC No. 19)",
+                      "Maintain 100% smoke-free environment",
+                      "Immediately report errors/negligence to supervisors",
+                      "Inform supervisor of all out-of-station trips",
+                      "Stay calm when dealing with angry clients",
+                      "Engage in open, professional dialogue for conflict resolution"
+                    ].map((item, i) => (
+                      <div key={i} className="flex gap-3 text-sm text-slate-500 bg-white p-4 rounded-2xl border border-slate-100">
+                        <CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> {item}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
-              <div className="pt-20 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center grayscale opacity-50">
-                    <img src="/up-seal.png" alt="Seal" className="w-10 h-10 object-contain" />
+            </section>
+
+            {/* Excellence */}
+            <section id="excellence" className="scroll-mt-32 space-y-12">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-black text-slate-900 font-outfit uppercase tracking-tight">3. Excellence and Growth</h2>
+                <p className="text-slate-500 text-lg">UP OVPA personnel shall be proactive future-thinkers, compliant with quality standards, and continuous learners.</p>
+              </div>
+
+              <div className="bg-white border border-slate-100 rounded-[3.5rem] overflow-hidden shadow-sm">
+                <div className="bg-emerald-50 p-10 border-b border-emerald-100">
+                  <h3 className="text-2xl font-black text-emerald-900 font-outfit uppercase">Completed Staff Work (CSW)</h3>
+                  <p className="text-emerald-700/60 text-sm font-bold uppercase tracking-widest mt-1">Institutional Standard for Effective Decision-Making</p>
+                </div>
+                <div className="p-10 grid grid-cols-1 md:grid-cols-5 gap-4">
+                  {[
+                    { step: "01", label: "Identify", desc: "Clearly describe the problem or issue." },
+                    { step: "02", label: "Context", desc: "Provide concise background info." },
+                    { step: "03", label: "Alternatives", desc: "List all possible solutions." },
+                    { step: "04", label: "Analyze", desc: "Data-driven analysis of criteria." },
+                    { step: "05", label: "Recommend", desc: "Suggest the best course of action." }
+                  ].map((step, i) => (
+                    <div key={i} className="space-y-3 p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                      <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">{step.step}</span>
+                      <h4 className="font-bold text-slate-800 text-sm">{step.label}</h4>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">{step.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="p-10 bg-slate-900 text-white rounded-[3rem] space-y-6 relative overflow-hidden">
+                  <AlertCircle className="absolute -bottom-6 -right-6 text-white/5" size={120} />
+                  <div className="space-y-2 relative z-10">
+                    <h3 className="text-xl font-bold">Innovation & Safespace</h3>
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                      All system/program improvements shall be reviewed by authority. 
+                      Ideas will never be dismissed without proper evaluation. 
+                      We foster a safe space for innovation and peer-to-peer mentoring.
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Institutional Revision</p>
-                    <p className="text-sm font-bold text-slate-900">Version 2.4 | April 2026</p>
+                  <div className="pt-4 border-t border-white/10 relative z-10">
+                    <p className="text-xs text-amber-500 font-bold uppercase tracking-widest">Commitment</p>
+                    <p className="text-sm text-emerald-100/60 mt-2 italic">"We support employees attending learning programs to align with university goals."</p>
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 text-center md:text-right max-w-xs">
-                  This document is a living framework and may be updated periodically to reflect 
-                  evolving institutional standards and legal requirements.
+
+                <div className="space-y-4">
+                  <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm flex items-start gap-4">
+                    <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+                      <Clock size={20} />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-800">Response Protocol</h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">When asked for an update on urgent tasks, reply within <span className="font-bold text-emerald-700 text-sm">2 hours</span>.</p>
+                    </div>
+                  </div>
+                  <div className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm flex items-start gap-4">
+                    <div className="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center shrink-0">
+                      <Award size={20} />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-800">Quality Standards</h4>
+                      <p className="text-xs text-slate-500 leading-relaxed">Follow UP Citizen’s Charter and Quality Management System Manual strictly.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Monitoring */}
+            <section id="monitoring" className="scroll-mt-32 space-y-10">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-black text-slate-900 font-outfit uppercase tracking-tight">4. Monitoring & Strategy</h2>
+                <div className="w-20 h-1.5 bg-emerald-600 rounded-full" />
+              </div>
+
+              <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed space-y-6">
+                <p>
+                  A **Core Values Champion (CVC)** shall be appointed per office/unit/division/section to monitor compliance with this policy. 
+                  While there are no sanctions for non-compliance, units and individuals who demonstrate adherence to these values may 
+                  qualify for existing university awards and recognition.
                 </p>
+                
+                <div className="bg-amber-50 border border-amber-100 p-8 rounded-[2rem] space-y-4">
+                  <h4 className="font-bold text-amber-900 flex items-center gap-2 uppercase tracking-widest text-xs">
+                    <AlertCircle size={16} /> Limitations & Review
+                  </h4>
+                  <p className="text-sm text-amber-800/70 leading-relaxed">
+                    This document does not claim to contain an exhaustive list of all behavioral indicators. 
+                    All personnel are expected to also review **RA 6713** and other relevant Civil Service Commission issuances.
+                    This document shall be amended as the need arises based on institutional experience.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-20 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm p-3">
+                    <img src="/up-seal.png" alt="UP Seal" className="w-full h-full object-contain" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Policy Governance</p>
+                    <p className="text-sm font-bold text-slate-900 uppercase">Office of the Vice President for Administration</p>
+                  </div>
+                </div>
+                <div className="text-center md:text-right">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Institutional Identity</p>
+                   <p className="text-xs text-slate-400 mt-1">SOLVE Initiative Framework © 2026</p>
+                </div>
               </div>
             </section>
           </article>
@@ -226,22 +322,27 @@ export default function ValuesPolicyPage() {
       </main>
 
       {/* Footer CTA */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-5xl mx-auto bg-emerald-950 rounded-[4rem] p-12 md:p-20 text-center space-y-8 shadow-2xl shadow-emerald-900/20 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-900/10 -skew-x-12 translate-x-20" />
-          <h2 className="text-3xl md:text-5xl font-outfit font-black text-white relative z-10">
-            Ready to lead with <span className="text-amber-500 italic">Integrity?</span>
-          </h2>
-          <p className="text-emerald-100/60 text-lg max-w-2xl mx-auto leading-relaxed relative z-10">
-            Join the community of Values Champions and help strengthen the ethical foundation of our national university.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4 relative z-10">
-            <Link href="/" className="bg-amber-600 hover:bg-amber-500 text-white font-bold py-5 px-12 rounded-2xl transition-all shadow-xl shadow-amber-900/40">
-              Apply to be a Values Champion
-            </Link>
+      <footer className="py-24 px-6 bg-emerald-950">
+        <div className="max-w-4xl mx-auto text-center space-y-12 relative">
+          <div className="space-y-4">
+            <h2 className="text-3xl md:text-5xl font-outfit font-black text-white">
+              Embody the <span className="text-amber-500 italic">UP Standard.</span>
+            </h2>
+            <p className="text-emerald-100/40 text-lg max-w-2xl mx-auto leading-relaxed">
+              Kalinangán is more than a guide—it is our shared commitment to public service excellence and honorable leadership.
+            </p>
           </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
+            <Link href="/" className="bg-white text-emerald-900 font-bold py-5 px-12 rounded-2xl transition-all shadow-xl hover:bg-emerald-50">
+              Return to SOLVE Hub
+            </Link>
+            <button className="bg-emerald-900 text-white border border-white/10 font-bold py-5 px-12 rounded-2xl transition-all hover:bg-emerald-800">
+              Contact OVPA Support
+            </button>
+          </div>
+          <p className="text-[10px] text-emerald-100/20 font-bold uppercase tracking-[0.4em]">Honor • Excellence • Service</p>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }
