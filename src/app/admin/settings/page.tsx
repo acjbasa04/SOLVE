@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 
 const SECTIONS = [
   { key: 'hero', label: 'Hero Section', icon: <Layout size={18} /> },
+  { key: 'about', label: 'About Section', icon: <Target size={18} /> },
   { key: 'mission', label: 'Mission Statement', icon: <Target size={18} /> },
   { key: 'vision', label: 'Vision Statement', icon: <Eye size={18} /> },
   { key: 'values', label: 'Core Values Intro', icon: <Eye size={18} /> },
