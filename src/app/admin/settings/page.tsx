@@ -263,7 +263,8 @@ export default function SiteContentManager() {
                   </div>
                 </div>
               </form>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
