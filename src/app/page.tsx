@@ -331,7 +331,11 @@ export default function LandingPage() {
             ) : team.map((member) => (
               <div key={member.id} className="text-center group w-56">
                 <div className="w-40 h-40 mx-auto bg-emerald-900 rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-white/5 group-hover:border-amber-500 transition-all flex items-center justify-center mb-6">
-                  <span className="text-white text-5xl font-black font-outfit opacity-20">{member.full_name[0]}</span>
+                  {member.image_url ? (
+                    <img src={member.image_url} alt={member.full_name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-white text-5xl font-black font-outfit opacity-20">{member.full_name[0]}</span>
+                  )}
                 </div>
                 <h4 className="text-lg font-bold text-white truncate">{member.full_name}</h4>
                 <p className="text-amber-500/60 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">{member.position}</p>
