@@ -70,10 +70,29 @@ export default function SiteContentManager() {
       setContent(data.content || "");
       setImageUrl(data.image_url || "");
     } else {
-      // Reset if no data found
-      setTitle("");
-      setSubtitle("");
-      setContent("");
+      // Fallback to site defaults so the user knows what they are editing
+      const defaults: Record<string, any> = {
+        hero: {
+          title: "Strengthening Organizational Leadership, Values and Ethics",
+          subtitle: "OVPA Initiative",
+          content: '"Honor and Excellence in Service of the Nation"'
+        },
+        about: {
+          title: "Upholding Honor, Championing Excellence.",
+          subtitle: "For the UP Community",
+          content: "SOLVE is a initiative designed for the dedicated employees of the University of the Philippines System."
+        },
+        mission: {
+          title: "Our Shared Values",
+          subtitle: "Cultivating a culture of leadership and accountability across all UP constituent universities.",
+          content: ""
+        }
+      };
+
+      const fallback = defaults[activeSection.key] || { title: "", subtitle: "", content: "" };
+      setTitle(fallback.title);
+      setSubtitle(fallback.subtitle);
+      setContent(fallback.content);
       setImageUrl("");
     }
     setLoading(false);
