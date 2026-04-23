@@ -14,9 +14,10 @@ import {
   BookOpen,
   Loader2,
   MapPin,
-  Target
+  Target,
+  X
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 
 export default function LandingPage() {
@@ -24,6 +25,7 @@ export default function LandingPage() {
   const [team, setTeam] = useState<any[]>([]);
   const [siteContent, setSiteContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedArticle, setSelectedArticle] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -269,7 +271,11 @@ export default function LandingPage() {
                 No recent records found in the institutional registry.
               </div>
             ) : articles.map((article) => (
-              <div key={article.id} className="group bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all">
+              <div 
+                key={article.id} 
+                onClick={() => setSelectedArticle(article)}
+                className="group bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all cursor-pointer hover:-translate-y-2"
+              >
                 <div className="aspect-[16/9] bg-emerald-950 rounded-2xl mb-8 flex items-center justify-center overflow-hidden">
                   {article.image_url ? (
                     <img src={article.image_url} alt={article.title} className="w-full h-full object-cover" />
@@ -353,6 +359,79 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Article Detail Modal */}
+      <AnimatePresence>
+        {selectedArticle && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 overflow-y-auto">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedArticle(null)}
+              className="absolute inset-0 bg-emerald-950/60 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, y: 50, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.95 }}
+              className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row h-fit max-h-[90vh]"
+            >
+              <button 
+                onClick={() => setSelectedArticle(null)}
+                className="absolute top-6 right-6 z-20 bg-black/20 hover:bg-black/40 text-white p-2 rounded-xl backdrop-blur-md transition-all"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="md:w-1/2 bg-emerald-900 relative">
+                {selectedArticle.image_url ? (
+                  <img src={selectedArticle.image_url} alt={selectedArticle.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Calendar size={80} className="text-white/10" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 to-transparent md:bg-gradient-to-r" />
+              </div>
+
+              <div className="md:w-1/2 p-8 md:p-12 overflow-y-auto space-y-8 bg-white">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-emerald-700/50">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={12} /> 
+                      {selectedArticle.event_date ? new Date(selectedArticle.event_date).toLocaleDateString() : new Date(selectedArticle.created_at).toLocaleDateString()}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Navigation size={12} />
+                      {selectedArticle.posted_by || "OVPA"}
+                    </span>
+                  </div>
+                  <h2 className="text-3xl font-outfit font-black text-slate-900 leading-tight">
+                    {selectedArticle.title}
+                  </h2>
+                </div>
+
+                <div className="prose prose-slate max-w-none">
+                  <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-wrap">
+                    {selectedArticle.content}
+                  </p>
+                </div>
+
+                <div className="pt-8 border-t border-slate-100 flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-700 rounded-2xl flex items-center justify-center text-white">
+                    <Shield size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Institutional Record</p>
+                    <p className="text-sm font-bold text-slate-900">Verified by Values Team</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
