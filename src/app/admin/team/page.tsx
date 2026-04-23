@@ -17,6 +17,7 @@ export default function TeamDirectoryManager() {
   const [phone, setPhone] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [editingMember, setEditingMember] = useState<any>(null);
 
   useEffect(() => {
     fetchMembers();
@@ -54,22 +55,46 @@ export default function TeamDirectoryManager() {
     }
   };
 
-  const handleAddMember = async (e: React.FormEvent) => {
+  const handleSaveMember = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const { error } = await supabase.from("team_members").insert([
-      { full_name: fullName, position, email, phone, image_url: imageUrl }
-    ]);
+    
+    const memberData = { full_name: fullName, position, email, phone, image_url: imageUrl };
+
+    let error;
+    if (editingMember) {
+      const { error: updateError } = await supabase.from("team_members").update(memberData).eq("id", editingMember.id);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase.from("team_members").insert([memberData]);
+      error = insertError;
+    }
+
     if (!error) {
-      setIsModalOpen(false);
-      setFullName("");
-      setPosition("");
-      setEmail("");
-      setPhone("");
-      setImageUrl("");
+      closeModal();
       fetchMembers();
     }
     setSaving(false);
+  };
+
+  const openEditModal = (member: any) => {
+    setEditingMember(member);
+    setFullName(member.full_name);
+    setPosition(member.position);
+    setEmail(member.email || "");
+    setPhone(member.phone || "");
+    setImageUrl(member.image_url || "");
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingMember(null);
+    setFullName("");
+    setPosition("");
+    setEmail("");
+    setPhone("");
+    setImageUrl("");
   };
 
   const handleDelete = async (id: string) => {
@@ -87,7 +112,7 @@ export default function TeamDirectoryManager() {
           <p className="text-slate-500">Manage the profiles of the SOLVE Values Champions.</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => { closeModal(); setIsModalOpen(true); }}
           className="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 hover:-translate-y-0.5 transition-all flex items-center gap-2"
         >
           <UserPlus size={20} /> Add Member
@@ -148,7 +173,10 @@ export default function TeamDirectoryManager() {
               </div>
 
               <div className="mt-8 flex gap-3">
-                <button className="flex-1 bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold py-3 rounded-xl transition-all text-sm">
+                <button 
+                  onClick={() => openEditModal(member)}
+                  className="flex-1 bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold py-3 rounded-xl transition-all text-sm"
+                >
                   Edit Profile
                 </button>
                 <button 
@@ -168,13 +196,15 @@ export default function TeamDirectoryManager() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-emerald-950/20">
           <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-              <h2 className="text-2xl font-bold text-slate-900 font-outfit">Add Team Member</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-200 rounded-xl transition-colors">
+              <h2 className="text-2xl font-bold text-slate-900 font-outfit">
+                {editingMember ? "Edit Member Profile" : "Add Team Member"}
+              </h2>
+              <button onClick={closeModal} className="p-2 hover:bg-slate-200 rounded-xl transition-colors">
                 <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleAddMember} className="p-8 space-y-6">
+            <form onSubmit={handleSaveMember} className="p-8 space-y-6">
               {/* Profile Photo Upload */}
               <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50/50 gap-4 group hover:border-emerald-500/50 transition-all">
                 {imageUrl ? (
@@ -259,7 +289,7 @@ export default function TeamDirectoryManager() {
               <div className="pt-4 flex gap-4">
                 <button 
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={closeModal}
                   className="flex-1 px-8 py-4 border border-slate-200 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-all"
                 >
                   Cancel
@@ -269,7 +299,7 @@ export default function TeamDirectoryManager() {
                   disabled={saving}
                   className="flex-1 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2"
                 >
-                  {saving ? <Loader2 size={20} className="animate-spin" /> : "Confirm Add Member"}
+                  {saving ? <Loader2 size={20} className="animate-spin" /> : editingMember ? "Save Changes" : "Confirm Add Member"}
                 </button>
               </div>
             </form>
