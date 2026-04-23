@@ -9,6 +9,7 @@ export default function NewsEventsManager() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<any>(null);
   
   // Form State
   const [title, setTitle] = useState("");
@@ -66,32 +67,62 @@ export default function NewsEventsManager() {
     setLoading(false);
   };
 
-  const handleCreatePost = async (e: React.FormEvent) => {
+  const handleEdit = (post: any) => {
+    setEditingPost(post);
+    setTitle(post.title || "");
+    setType(post.type || "article");
+    setStatus(post.status || "published");
+    setContent(post.content || "");
+    setEventDate(post.event_date || "");
+    setPostedBy(post.posted_by || "");
+    setImageUrl(post.image_url || "");
+    setIsModalOpen(true);
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+    setEventDate("");
+    setPostedBy("");
+    setImageUrl("");
+    setEditingPost(null);
+  };
+
+  const handleCreateOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     
     const { data: { session } } = await supabase.auth.getSession();
 
-    const { error } = await supabase.from("articles").insert([
-      { 
-        title, 
-        content, 
-        type, 
-        status, 
-        image_url: imageUrl,
-        event_date: eventDate || null,
-        posted_by: postedBy,
-        author_id: session?.user?.id 
-      }
-    ]);
+    const postData = { 
+      title, 
+      content, 
+      type, 
+      status, 
+      image_url: imageUrl,
+      event_date: eventDate || null,
+      posted_by: postedBy,
+      author_id: session?.user?.id 
+    };
 
-    if (!error) {
-      setIsModalOpen(false);
-      setTitle("");
-      setContent("");
-      setEventDate("");
-      setPostedBy("");
-      fetchPosts();
+    if (editingPost) {
+      const { error } = await supabase
+        .from("articles")
+        .update(postData)
+        .eq("id", editingPost.id);
+      
+      if (!error) {
+        setIsModalOpen(false);
+        resetForm();
+        fetchPosts();
+      }
+    } else {
+      const { error } = await supabase.from("articles").insert([postData]);
+      if (!error) {
+        setIsModalOpen(false);
+        resetForm();
+        fetchPosts();
+      }
     }
     setSaving(false);
   };
@@ -188,6 +219,9 @@ export default function NewsEventsManager() {
                   </td>
                   <td className="px-10 py-6 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleEdit(post)} className="p-2 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors">
+                        <Edit2 size={18} />
+                      </button>
                       <button onClick={() => handleDelete(post.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors">
                         <Trash2 size={18} />
                       </button>
@@ -205,13 +239,15 @@ export default function NewsEventsManager() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-emerald-950/20">
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-              <h2 className="text-2xl font-bold text-slate-900 font-outfit">Create New Post</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-200 rounded-xl transition-colors">
+              <h2 className="text-2xl font-bold text-slate-900 font-outfit">
+                {editingPost ? "Edit Institutional Post" : "Create New Post"}
+              </h2>
+              <button onClick={() => { setIsModalOpen(false); resetForm(); }} className="p-2 hover:bg-slate-200 rounded-xl transition-colors">
                 <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleCreatePost} className="p-8 space-y-6">
+            <form onSubmit={handleCreateOrUpdate} className="p-8 space-y-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Post Title</label>
                 <input 
@@ -319,7 +355,7 @@ export default function NewsEventsManager() {
               <div className="pt-4 flex gap-4">
                 <button 
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => { setIsModalOpen(false); resetForm(); }}
                   className="flex-1 px-8 py-4 border border-slate-200 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-all"
                 >
                   Cancel
@@ -329,7 +365,7 @@ export default function NewsEventsManager() {
                   disabled={saving}
                   className="flex-1 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2"
                 >
-                  {saving ? <Loader2 size={20} className="animate-spin" /> : "Authorize & Post"}
+                  {saving ? <Loader2 size={20} className="animate-spin" /> : (editingPost ? "Update Record" : "Authorize & Post")}
                 </button>
               </div>
             </form>
