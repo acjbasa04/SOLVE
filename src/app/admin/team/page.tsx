@@ -1,14 +1,16 @@
 "use client";
 
-import { Plus, Search, Mail, Phone, MoreHorizontal, UserPlus, Loader2, X, Trash2, Upload, Camera } from "lucide-react";
+import { Plus, Search, Mail, Phone, MoreHorizontal, UserPlus, Loader2, X, Trash2, Upload, Camera, GripVertical } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 
 export default function TeamDirectoryManager() {
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [reordering, setReordering] = useState(false);
 
   // Form State
   const [fullName, setFullName] = useState("");
@@ -25,7 +27,7 @@ export default function TeamDirectoryManager() {
 
   const fetchMembers = async () => {
     setLoading(true);
-    const { data } = await supabase.from("team_members").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("team_members").select("*").order("display_order", { ascending: true });
     if (data) setMembers(data);
     setLoading(false);
   };
@@ -59,13 +61,15 @@ export default function TeamDirectoryManager() {
     e.preventDefault();
     setSaving(true);
     
-    const memberData = { full_name: fullName, position, email, phone, image_url: imageUrl };
+    const memberData: any = { full_name: fullName, position, email, phone, image_url: imageUrl };
 
     let error;
     if (editingMember) {
       const { error: updateError } = await supabase.from("team_members").update(memberData).eq("id", editingMember.id);
       error = updateError;
     } else {
+      // New members go to end of list
+      memberData.display_order = members.length;
       const { error: insertError } = await supabase.from("team_members").insert([memberData]);
       error = insertError;
     }
@@ -104,6 +108,26 @@ export default function TeamDirectoryManager() {
     }
   };
 
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination || result.source.index === result.destination.index) return;
+
+    const reordered = Array.from(members);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+
+    // Optimistic update
+    setMembers(reordered);
+    setReordering(true);
+
+    // Persist all new display_order values
+    const updates = reordered.map((member, index) => 
+      supabase.from("team_members").update({ display_order: index }).eq("id", member.id)
+    );
+
+    await Promise.all(updates);
+    setReordering(false);
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -111,12 +135,19 @@ export default function TeamDirectoryManager() {
           <h1 className="text-3xl font-bold text-slate-900 font-outfit">Team Directory</h1>
           <p className="text-slate-500">Manage the profiles of the SOLVE Values Champions.</p>
         </div>
-        <button 
-          onClick={() => { closeModal(); setIsModalOpen(true); }}
-          className="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 hover:-translate-y-0.5 transition-all flex items-center gap-2"
-        >
-          <UserPlus size={20} /> Add Member
-        </button>
+        <div className="flex items-center gap-4">
+          {reordering && (
+            <span className="text-xs font-bold text-amber-600 bg-amber-50 px-4 py-2 rounded-xl animate-pulse">
+              Saving order...
+            </span>
+          )}
+          <button 
+            onClick={() => { closeModal(); setIsModalOpen(true); }}
+            className="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          >
+            <UserPlus size={20} /> Add Member
+          </button>
+        </div>
       </div>
 
       <div className="relative max-w-md">
@@ -128,6 +159,11 @@ export default function TeamDirectoryManager() {
         />
       </div>
 
+      <p className="text-xs text-slate-400 font-medium flex items-center gap-2">
+        <GripVertical size={14} className="text-slate-300" />
+        Drag cards to reorder how they appear on the landing page.
+      </p>
+
       {loading ? (
         <div className="py-20 text-center">
           <Loader2 className="animate-spin mx-auto text-emerald-600 mb-4" size={32} />
@@ -138,57 +174,88 @@ export default function TeamDirectoryManager() {
           No members found. Add your first Values Champion.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {members.map((member) => (
-            <div key={member.id} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div className="flex justify-between items-start mb-6">
-                <div className="relative">
-                  <div className="w-24 h-24 bg-emerald-50 rounded-[2rem] overflow-hidden border-4 border-white shadow-lg flex items-center justify-center">
-                    {member.image_url ? (
-                      <img src={member.image_url} alt={member.full_name} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-emerald-700 font-bold text-2xl">{member.full_name[0].toUpperCase()}</span>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="team-grid" direction="horizontal">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 transition-colors duration-200 rounded-3xl p-2 -m-2 ${
+                  snapshot.isDraggingOver ? "bg-emerald-50/50 ring-2 ring-emerald-200/50 ring-dashed" : ""
+                }`}
+              >
+                {members.map((member, index) => (
+                  <Draggable key={member.id} draggableId={member.id} index={index}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all group ${
+                          snapshot.isDragging ? "shadow-2xl ring-2 ring-emerald-400 scale-[1.02] rotate-1 z-50" : "hover:-translate-y-1"
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="relative flex items-center gap-4">
+                            {/* Drag Handle */}
+                            <div
+                              {...provided.dragHandleProps}
+                              className="flex flex-col items-center justify-center w-8 h-8 rounded-lg text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 cursor-grab active:cursor-grabbing transition-all"
+                              title="Drag to reorder"
+                            >
+                              <GripVertical size={18} />
+                            </div>
+                            <div className="w-24 h-24 bg-emerald-50 rounded-[2rem] overflow-hidden border-4 border-white shadow-lg flex items-center justify-center">
+                              {member.image_url ? (
+                                <img src={member.image_url} alt={member.full_name} className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="text-emerald-700 font-bold text-2xl">{member.full_name[0].toUpperCase()}</span>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-bold text-slate-300 bg-slate-50 px-2 py-1 rounded-lg tabular-nums">
+                            #{index + 1}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1 mb-8">
+                          <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors truncate">{member.full_name}</h3>
+                          <p className="text-emerald-600 font-bold text-xs uppercase tracking-[0.2em]">{member.position}</p>
+                        </div>
+
+                        <div className="space-y-3 pt-6 border-t border-slate-50">
+                          <div className="flex items-center gap-3 text-slate-400">
+                            <Mail size={16} />
+                            <span className="text-sm truncate">{member.email || "No email listed"}</span>
+                          </div>
+                          <div className="flex items-center gap-3 text-slate-400">
+                            <Phone size={16} />
+                            <span className="text-sm">{member.phone || "No phone listed"}</span>
+                          </div>
+                        </div>
+
+                        <div className="mt-8 flex gap-3">
+                          <button 
+                            onClick={() => openEditModal(member)}
+                            className="flex-1 bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold py-3 rounded-xl transition-all text-sm"
+                          >
+                            Edit Profile
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(member.id)}
+                            className="px-4 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-all"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
                     )}
-                  </div>
-                </div>
-                <button className="text-slate-300 hover:text-slate-600 p-2 transition-colors">
-                  <MoreHorizontal size={20} />
-                </button>
+                  </Draggable>
+                ))}
+                {provided.placeholder}
               </div>
-
-              <div className="space-y-1 mb-8">
-                <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors truncate">{member.full_name}</h3>
-                <p className="text-emerald-600 font-bold text-xs uppercase tracking-[0.2em]">{member.position}</p>
-              </div>
-
-              <div className="space-y-3 pt-6 border-t border-slate-50">
-                <div className="flex items-center gap-3 text-slate-400">
-                  <Mail size={16} />
-                  <span className="text-sm truncate">{member.email || "No email listed"}</span>
-                </div>
-                <div className="flex items-center gap-3 text-slate-400">
-                  <Phone size={16} />
-                  <span className="text-sm">{member.phone || "No phone listed"}</span>
-                </div>
-              </div>
-
-              <div className="mt-8 flex gap-3">
-                <button 
-                  onClick={() => openEditModal(member)}
-                  className="flex-1 bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-bold py-3 rounded-xl transition-all text-sm"
-                >
-                  Edit Profile
-                </button>
-                <button 
-                  onClick={() => handleDelete(member.id)}
-                  className="px-4 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-all"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
 
       {/* Add Member Modal */}
