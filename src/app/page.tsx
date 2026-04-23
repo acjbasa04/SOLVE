@@ -35,7 +35,7 @@ export default function LandingPage() {
       setLoading(true);
       
       const { data: articlesData } = await supabase.from('articles').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(3);
-      const { data: teamData } = await supabase.from('team_members').select('*').order('created_at', { ascending: true });
+      const { data: teamData } = await supabase.from('team_members').select('*').order('display_order', { ascending: true });
       const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false }).limit(8);
       const { data: contentData } = await supabase.from('site_content').select('*');
 
