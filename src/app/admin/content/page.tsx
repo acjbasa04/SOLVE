@@ -15,6 +15,8 @@ export default function NewsEventsManager() {
   const [type, setType] = useState("article");
   const [status, setStatus] = useState("published");
   const [content, setContent] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [postedBy, setPostedBy] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -41,13 +43,23 @@ export default function NewsEventsManager() {
     const { data: { session } } = await supabase.auth.getSession();
 
     const { error } = await supabase.from("articles").insert([
-      { title, content, type, status, author_id: session?.user?.id }
+      { 
+        title, 
+        content, 
+        type, 
+        status, 
+        event_date: eventDate || null,
+        posted_by: postedBy,
+        author_id: session?.user?.id 
+      }
     ]);
 
     if (!error) {
       setIsModalOpen(false);
       setTitle("");
       setContent("");
+      setEventDate("");
+      setPostedBy("");
       fetchPosts();
     }
     setSaving(false);
@@ -202,6 +214,27 @@ export default function NewsEventsManager() {
                     <option value="published">Immediate Publish</option>
                     <option value="draft">Save as Draft</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Event/Post Date</label>
+                  <input 
+                    type="date"
+                    value={eventDate}
+                    onChange={(e) => setEventDate(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Posted By / Office</label>
+                  <input 
+                    value={postedBy}
+                    onChange={(e) => setPostedBy(e.target.value)}
+                    placeholder="e.g. OVPA, SPMO, etc."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                  />
                 </div>
               </div>
 

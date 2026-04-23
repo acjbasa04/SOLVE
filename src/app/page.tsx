@@ -278,12 +278,14 @@ export default function LandingPage() {
                   )}
                 </div>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full tracking-wider">
-                      {article.type}
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-emerald-700/50">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={12} /> 
+                      {article.event_date ? new Date(article.event_date).toLocaleDateString() : new Date(article.created_at).toLocaleDateString()}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                      {new Date(article.created_at).toLocaleDateString()}
+                    <span className="flex items-center gap-1.5">
+                      <Navigation size={12} />
+                      {article.posted_by || "OVPA"}
                     </span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
