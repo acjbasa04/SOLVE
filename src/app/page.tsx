@@ -367,7 +367,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto relative z-10 space-y-20">
           <div className="text-center space-y-4">
             <h2 className="text-4xl md:text-5xl font-outfit font-black text-white italic">Our Leadership</h2>
-            <p className="text-emerald-100/40 text-lg max-w-2xl mx-auto uppercase tracking-widest text-sm font-bold">The Values Champions Directorate</p>
+            <p className="text-emerald-100/40 text-lg max-w-2xl mx-auto uppercase tracking-widest text-sm font-bold">Values Champions</p>
           </div>
           
           <div className="flex flex-wrap justify-center gap-12">
