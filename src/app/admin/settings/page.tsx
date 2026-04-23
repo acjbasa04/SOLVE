@@ -10,6 +10,7 @@ const SECTIONS = [
   { key: 'mission', label: 'Mission Statement', icon: <Target size={18} /> },
   { key: 'vision', label: 'Vision Statement', icon: <Eye size={18} /> },
   { key: 'values', label: 'Core Values Intro', icon: <Eye size={18} /> },
+  { key: 'cta', label: 'Footer CTA', icon: <Layout size={18} /> },
 ];
 
 export default function SiteContentManager() {
@@ -90,6 +91,11 @@ export default function SiteContentManager() {
         title: "Core Institutional Values",
         subtitle: "The SOLVE Pillars",
         content: "Our foundation is built on the collective commitment of every UP employee."
+      },
+      cta: {
+        title: "Commit to Honor and Excellence. Ready to Lead with Integrity?",
+        subtitle: "",
+        content: "Join the community of Values Champions and help strengthen the ethical foundation of our national university."
       }
     };
 

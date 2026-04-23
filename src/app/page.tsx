@@ -69,6 +69,11 @@ export default function LandingPage() {
     content: "SOLVE is a initiative designed for the dedicated employees of the University of the Philippines System."
   });
 
+  const cta = getContent('cta', {
+    title: "Commit to Honor and Excellence. Ready to Lead with Integrity?",
+    content: "Join the community of Values Champions and help strengthen the ethical foundation of our national university."
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. Hero Section - Values-Driven / UP Mandate Focus */}
@@ -330,8 +335,12 @@ export default function LandingPage() {
       {/* 5. Footer CTA */}
       <section className="py-24 px-6 bg-white">
         <div className="max-w-5xl mx-auto bg-emerald-50 rounded-[4rem] p-12 md:p-20 text-center space-y-8 border border-emerald-100 relative">
-          <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900">Ready to Foster <span className="text-emerald-700">Integrity</span>?</h2>
-          <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">Join the SOLVE community and contribute to the strengthening of organizational values.</p>
+          <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900">
+            {cta.title.includes("Integrity") ? (
+              <>{cta.title.replace("Integrity", "").replace("?", "")} <span className="text-emerald-700">Integrity</span>?</>
+            ) : cta.title}
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">{cta.content}</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
             <button className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-5 px-12 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2">
               <Mail size={22} /> Subscribe to Newsletter
