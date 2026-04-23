@@ -151,3 +151,27 @@ create policy "Admins can view submissions." on public.submissions
       and profiles.role = 'Admin'
     )
   );
+
+-- 8. Institutional Resources
+create table public.resources (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  description text,
+  file_url text not null,
+  category text default 'Policy',
+  created_at timestamp with time zone default timezone('utc'::text, now())
+);
+
+alter table public.resources enable row level security;
+
+create policy "Resources are viewable by everyone." on public.resources
+  for select using (true);
+
+create policy "Admins can manage resources." on public.resources
+  for all using (
+    exists (
+      select 1 from public.profiles
+      where profiles.id = auth.uid()
+      and profiles.role = 'Admin'
+    )
+  );

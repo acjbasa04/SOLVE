@@ -16,7 +16,9 @@ import {
   Loader2,
   MapPin,
   Target,
-  X
+  X,
+  FileText,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
@@ -25,6 +27,7 @@ export default function LandingPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [team, setTeam] = useState<any[]>([]);
   const [gallery, setGallery] = useState<any[]>([]);
+  const [resources, setResources] = useState<any[]>([]);
   const [siteContent, setSiteContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
@@ -37,11 +40,13 @@ export default function LandingPage() {
       const { data: articlesData } = await supabase.from('articles').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(3);
       const { data: teamData } = await supabase.from('team_members').select('*').order('display_order', { ascending: true });
       const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false }).limit(8);
+      const { data: resourcesData } = await supabase.from('resources').select('*').order('created_at', { ascending: false });
       const { data: contentData } = await supabase.from('site_content').select('*');
 
       if (articlesData) setArticles(articlesData);
       if (teamData) setTeam(teamData);
       if (galleryData) setGallery(galleryData);
+      if (resourcesData) setResources(resourcesData);
       if (contentData) setSiteContent(contentData);
       
       setLoading(false);
@@ -399,7 +404,67 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. Footer CTA */}
+      {/* 5. Governance & Resources */}
+      <section id="resources" className="py-32 px-6 bg-slate-50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 text-center md:text-left">
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900 tracking-tight">Governance & Resources</h2>
+              <p className="text-slate-500 text-lg">Official policies, frameworks, and institutional documents.</p>
+            </div>
+            <div className="p-4 bg-emerald-100/50 rounded-2xl flex items-center gap-3">
+              <ShieldCheck className="text-emerald-700" size={24} />
+              <span className="text-xs font-bold text-emerald-800 uppercase tracking-widest">Verified Library</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {loading ? (
+              [1, 2, 3].map(i => (
+                <div key={i} className="h-48 bg-white rounded-[2rem] animate-pulse" />
+              ))
+            ) : resources.length === 0 ? (
+              <div className="col-span-full py-16 text-center text-slate-400 font-medium border-2 border-dashed border-slate-200 rounded-[3rem]">
+                Archive synchronization pending.
+              </div>
+            ) : resources.map((res) => (
+              <div key={res.id} className="group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center">
+                      <FileText size={24} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-2 py-1 rounded-md">
+                      {res.category}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                    {res.title}
+                  </h3>
+                  <p className="text-slate-500 text-sm line-clamp-2 leading-relaxed">
+                    {res.description}
+                  </p>
+                </div>
+                <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
+                    Added {new Date(res.created_at).toLocaleDateString()}
+                  </span>
+                  <a 
+                    href={res.file_url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+                  >
+                    Download <Download size={16} />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Footer CTA */}
       <section className="py-24 px-6 bg-white">
         <div className="max-w-5xl mx-auto bg-emerald-50 rounded-[4rem] p-12 md:p-20 text-center space-y-8 border border-emerald-100 relative">
           <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900">

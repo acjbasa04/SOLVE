@@ -12,7 +12,8 @@ import {
   Menu, 
   X, 
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  FileText
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -69,6 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Site Content", icon: LayoutDashboard, href: "/admin/settings" },
     { name: "News & Events", icon: Newspaper, href: "/admin/content" },
     { name: "Team Directory", icon: Users, href: "/admin/team" },
+    { name: "Institutional Resources", icon: FileText, href: "/admin/resources" },
     { name: "Media Gallery", icon: ImageIcon, href: "/admin/gallery" },
   ];
 
