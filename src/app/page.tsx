@@ -495,7 +495,7 @@ export default function LandingPage() {
       {/* Image Lightbox Modal */}
       <AnimatePresence>
         {selectedImage && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-12">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 md:p-20">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -504,18 +504,24 @@ export default function LandingPage() {
               className="absolute inset-0 bg-emerald-950/95 backdrop-blur-xl"
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="relative z-10 max-w-7xl max-h-full"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative z-10 w-full max-w-5xl h-full flex flex-col items-center justify-center pointer-events-none"
             >
               <button 
                 onClick={() => setSelectedImage(null)}
-                className="absolute -top-16 right-0 text-white/60 hover:text-white flex items-center gap-2 font-bold transition-all"
+                className="absolute -top-12 right-0 text-white/50 hover:text-white flex items-center gap-2 font-bold transition-all pointer-events-auto"
               >
-                Close <X size={24} />
+                Close <X size={20} />
               </button>
-              <img src={selectedImage} alt="Gallery Preview" className="w-full h-full object-contain rounded-3xl shadow-2xl" />
+              <div className="w-full h-full max-h-[80vh] flex items-center justify-center">
+                <img 
+                  src={selectedImage} 
+                  alt="Gallery Preview" 
+                  className="max-w-full max-h-full object-contain rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.5)] pointer-events-auto" 
+                />
+              </div>
             </motion.div>
           </div>
         )}
