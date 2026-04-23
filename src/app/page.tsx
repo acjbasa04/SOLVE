@@ -391,7 +391,7 @@ export default function LandingPage() {
                     <span className="text-white text-5xl font-black font-outfit opacity-20">{member.full_name[0]}</span>
                   )}
                 </div>
-                <h4 className="text-lg font-bold text-white truncate">{member.full_name}</h4>
+                <h4 className="text-lg font-bold text-white">{member.full_name}</h4>
                 <p className="text-amber-500/60 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">{member.position}</p>
               </div>
             ))}
