@@ -176,7 +176,10 @@ export default function LandingPage() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6"
           >
-            <button className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-5 px-12 rounded-2xl shadow-2xl shadow-amber-900/40 transition-all flex items-center justify-center gap-2 group active:scale-95 text-lg">
+            <button 
+              onClick={() => setIsContactModalOpen(true)}
+              className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-5 px-12 rounded-2xl shadow-2xl shadow-amber-900/40 transition-all flex items-center justify-center gap-2 group active:scale-95 text-lg"
+            >
               Connect with Us
               <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
             </button>
