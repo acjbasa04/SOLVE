@@ -107,7 +107,7 @@ export default function NewsArchivePage() {
                   </h3>
                   
                   <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed flex-1">
-                    {article.content?.replace(/<[^>]*>/g, '')}
+                    {article.content?.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")}
                   </p>
                   
                   <div className="pt-6 mt-auto border-t border-slate-50 flex items-center justify-between">
