@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { ShieldCheck, Menu, X, ArrowRight, Compass } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -25,7 +28,7 @@ export const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${
-      scrolled ? "py-4 bg-white/80 backdrop-blur-2xl shadow-xl shadow-emerald-950/5 border-b border-emerald-50" : "py-8 bg-transparent"
+      scrolled || !isHome ? "py-4 bg-white/80 backdrop-blur-2xl shadow-xl shadow-emerald-950/5 border-b border-emerald-50" : "py-8 bg-transparent"
     }`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
@@ -38,7 +41,7 @@ export const Navbar = () => {
             />
           </div>
           <div className="flex flex-col leading-none">
-            <span className={`font-outfit font-black text-2xl tracking-tighter ${scrolled ? "text-emerald-950" : "text-white"}`}>
+            <span className={`font-outfit font-black text-2xl tracking-tighter ${scrolled || !isHome ? "text-emerald-950" : "text-white"}`}>
               S<span className="text-amber-500">O</span>LVE
             </span>
           </div>
@@ -49,9 +52,9 @@ export const Navbar = () => {
           {navLinks.map((link) => (
             <Link 
               key={link.name} 
-              href={link.href} 
+              href={isHome ? link.href : (link.href.startsWith("#") ? `/${link.href}` : link.href)} 
               className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-                scrolled ? "text-slate-600 hover:text-emerald-700" : "text-emerald-100 hover:text-amber-400"
+                scrolled || !isHome ? "text-slate-600 hover:text-emerald-700" : "text-emerald-100 hover:text-amber-400"
               }`}
             >
               {link.name}
@@ -70,7 +73,7 @@ export const Navbar = () => {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className={`md:hidden p-2 rounded-xl transition-colors ${
-            scrolled ? "text-emerald-950 hover:bg-emerald-50" : "text-white hover:bg-white/10"
+            scrolled || !isHome ? "text-emerald-950 hover:bg-emerald-50" : "text-white hover:bg-white/10"
           }`}
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -90,7 +93,7 @@ export const Navbar = () => {
               {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
-                  href={link.href}
+                  href={isHome ? link.href : (link.href.startsWith("#") ? `/${link.href}` : link.href)}
                   onClick={() => setIsOpen(false)}
                   className="block py-4 px-6 rounded-2xl bg-slate-50 text-emerald-950 font-bold text-lg hover:bg-emerald-50 transition-all"
                 >
