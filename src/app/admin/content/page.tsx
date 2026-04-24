@@ -3,6 +3,27 @@
 import { Plus, Search, Filter, MoreVertical, Edit2, Trash2, Eye, Loader2, X, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import dynamic from 'next/dynamic';
+import 'react-quill-new/dist/quill.snow.css';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link', 'image'],
+    ['clean'],
+  ],
+};
+
+const quillFormats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet',
+  'link', 'image',
+];
 
 export default function NewsEventsManager() {
   const [activeTab, setActiveTab] = useState("all");
@@ -306,15 +327,17 @@ export default function NewsEventsManager() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Main Content</label>
-                <textarea 
-                  required
-                  rows={6}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Share the details of this values initiative..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500 transition-all resize-none"
-                />
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Main Content (Rich Text)</label>
+                <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white min-h-[400px]">
+                  <ReactQuill 
+                    theme="snow"
+                    value={content}
+                    onChange={setContent}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    placeholder="Elaborate on the institutional pulse..."
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
