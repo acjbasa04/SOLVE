@@ -309,7 +309,7 @@ export default function LandingPage() {
                     {article.title}
                   </h3>
                   <p className="text-slate-500 text-sm line-clamp-2 leading-relaxed">
-                    {article.content}
+                    {article.content?.replace(/<[^>]*>/g, "")}
                   </p>
                 </div>
               </Link>
