@@ -40,6 +40,7 @@ export default function NewsEventsManager() {
   const [eventDate, setEventDate] = useState("");
   const [postedBy, setPostedBy] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [displayOrder, setDisplayOrder] = useState<number | string>("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -77,7 +78,7 @@ export default function NewsEventsManager() {
 
   const fetchPosts = async () => {
     setLoading(true);
-    let query = supabase.from("articles").select("*").order("created_at", { ascending: false });
+    let query = supabase.from("articles").select("*").order("display_order", { ascending: true, nullsFirst: false }).order("created_at", { ascending: false });
     
     if (activeTab === "articles") query = query.eq("type", "article");
     if (activeTab === "events") query = query.eq("type", "event");
@@ -97,6 +98,7 @@ export default function NewsEventsManager() {
     setEventDate(post.event_date || "");
     setPostedBy(post.posted_by || "");
     setImageUrl(post.image_url || "");
+    setDisplayOrder(post.display_order ?? "");
     setIsModalOpen(true);
   };
 
@@ -106,6 +108,8 @@ export default function NewsEventsManager() {
     setEventDate("");
     setPostedBy("");
     setImageUrl("");
+    setImageUrl("");
+    setDisplayOrder("");
     setEditingPost(null);
   };
 
@@ -124,6 +128,7 @@ export default function NewsEventsManager() {
         image_url: imageUrl || null,
         event_date: eventDate || null,
         posted_by: postedBy || null,
+        display_order: displayOrder !== "" ? parseInt(displayOrder.toString()) : null,
         author_id: session?.user?.id || null 
       };
 
@@ -336,6 +341,17 @@ export default function NewsEventsManager() {
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2 shrink-0">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Manual Sequence (Display Order)</label>
+                <input 
+                  type="number"
+                  value={displayOrder}
+                  onChange={(e) => setDisplayOrder(e.target.value)}
+                  placeholder="e.g. 1 (Top), 2, 3..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500"
+                />
               </div>
 
               <div className="space-y-2 flex-1 flex flex-col min-h-[400px]">
