@@ -31,7 +31,6 @@ export default function LandingPage() {
   const [resources, setResources] = useState<any[]>([]);
   const [siteContent, setSiteContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedArticle, setSelectedArticle] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -264,9 +263,9 @@ export default function LandingPage() {
               <h2 className="text-4xl md:text-5xl font-outfit font-black text-slate-900 tracking-tight">Institutional Pulse</h2>
               <p className="text-slate-500 text-lg">Latest updates from the Values Champions community.</p>
             </div>
-            <button className="text-emerald-700 font-bold flex items-center gap-2 hover:underline">
+            <Link href="/news" className="text-emerald-700 font-bold flex items-center gap-2 hover:underline">
               View All Archive <ArrowRight size={18} />
-            </button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -283,9 +282,9 @@ export default function LandingPage() {
                 No recent records found in the institutional registry.
               </div>
             ) : articles.map((article) => (
-              <div 
+              <Link 
                 key={article.id} 
-                onClick={() => setSelectedArticle(article)}
+                href={`/news/${article.id}`}
                 className="group bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all cursor-pointer hover:-translate-y-2"
               >
                 <div className="aspect-[16/9] bg-emerald-950 rounded-2xl mb-8 flex items-center justify-center overflow-hidden">
@@ -313,7 +312,7 @@ export default function LandingPage() {
                     {article.content}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -484,79 +483,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* Article Detail Modal */}
-      <AnimatePresence>
-        {selectedArticle && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 overflow-y-auto">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedArticle(null)}
-              className="absolute inset-0 bg-emerald-950/60 backdrop-blur-md"
-            />
-            <motion.div 
-              initial={{ opacity: 0, y: 50, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.95 }}
-              className="bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row h-fit max-h-[90vh]"
-            >
-              <button 
-                onClick={() => setSelectedArticle(null)}
-                className="absolute top-6 right-6 z-20 bg-black/20 hover:bg-black/40 text-white p-2 rounded-xl backdrop-blur-md transition-all"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="md:w-1/2 bg-emerald-950 flex items-center justify-center relative p-4">
-                {selectedArticle.image_url ? (
-                  <img src={selectedArticle.image_url} alt={selectedArticle.title} className="w-full h-full object-contain" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Calendar size={80} className="text-white/10" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/20 to-transparent pointer-events-none" />
-              </div>
-
-              <div className="md:w-1/2 p-8 md:p-16 overflow-y-auto space-y-10 bg-white">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-emerald-700/50">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar size={12} /> 
-                      {selectedArticle.event_date ? new Date(selectedArticle.event_date).toLocaleDateString() : new Date(selectedArticle.created_at).toLocaleDateString()}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Navigation size={12} />
-                      {selectedArticle.posted_by || "OVPA"}
-                    </span>
-                  </div>
-                  <h2 className="text-4xl font-outfit font-black text-slate-900 leading-tight tracking-tight">
-                    {selectedArticle.title}
-                  </h2>
-                </div>
-
-                <div className="prose prose-slate max-w-none">
-                  <p className="text-slate-600 text-xl leading-relaxed whitespace-pre-wrap font-light">
-                    {selectedArticle.content}
-                  </p>
-                </div>
-
-                <div className="pt-10 border-t border-slate-100 flex items-center gap-5">
-                  <div className="w-14 h-14 bg-emerald-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-700/20">
-                    <ShieldCheck size={28} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Institutional Record</p>
-                    <p className="text-base font-bold text-slate-900 tracking-tight">Verified by Values Team</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Image Lightbox Modal */}
       <AnimatePresence>
