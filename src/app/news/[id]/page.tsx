@@ -56,7 +56,7 @@ export default function NewsDetailPage() {
       
       {/* Article Header */}
       <header className="pt-40 pb-20 px-6 bg-slate-50 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto space-y-8 relative z-10">
+        <div className="max-w-5xl mx-auto space-y-8 relative z-10">
           <Link href="/news" className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:translate-x-[-4px] transition-transform">
             <ArrowLeft size={18} /> Back to Archive
           </Link>
@@ -115,12 +115,13 @@ export default function NewsDetailPage() {
       </section>
 
       {/* Article Content */}
-      <main className="max-w-4xl mx-auto px-6 py-24">
-        <div className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-emerald-800 prose-blockquote:border-l-emerald-500 prose-blockquote:bg-emerald-50 prose-blockquote:py-2 prose-blockquote:px-8 prose-blockquote:rounded-r-2xl">
+      <main className="max-w-5xl mx-auto px-6 py-24">
+        <div className="">
           {/* We'll render the content. If it contains newlines, we preserve them. */}
-          <div className="whitespace-pre-line text-lg leading-relaxed text-slate-700">
-            {article.content}
-          </div>
+          <div 
+            className="rich-text-content text-lg leading-relaxed text-slate-700 space-y-6"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
         </div>
 
         {/* Footer of article */}
@@ -141,7 +142,7 @@ export default function NewsDetailPage() {
 
       {/* Footer CTA */}
       <footer className="py-24 px-6 bg-emerald-950 text-white">
-        <div className="max-w-3xl mx-auto text-center space-y-8">
+        <div className="max-w-5xl mx-auto text-center space-y-8">
           <Compass size={48} className="mx-auto text-amber-500 opacity-20" />
           <h2 className="text-3xl md:text-5xl font-black font-outfit leading-tight">
             Stay informed about our <br /> <span className="text-amber-500 italic">Institutional Journey.</span>

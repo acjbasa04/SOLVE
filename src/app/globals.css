@@ -81,3 +81,42 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Rich Text Rendering Styles */
+.rich-text-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+.rich-text-content h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; margin-bottom: 2rem; color: #0f172a; leading: 1.1; letter-spacing: -0.02em; }
+.rich-text-content h2 { font-size: 1.8rem; font-weight: 800; margin-top: 3rem; margin-bottom: 1.25rem; color: #1e293b; letter-spacing: -0.01em; }
+.rich-text-content h3 { font-size: 1.4rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: #334155; }
+.rich-text-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #475569; }
+.rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+.rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+.rich-text-content blockquote { border-left: 6px solid #10b981; background-color: #f8fafc; padding: 2rem 2.5rem; border-radius: 0 1.5rem 1.5rem 0; font-style: italic; margin: 2.5rem 0; color: #334155; font-size: 1.2rem; }
+.rich-text-content img { border-radius: 2rem; margin: 3rem 0; width: 100%; height: auto; shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); border: 1px solid #f1f5f9; }
+.rich-text-content strong { color: #065f46; font-weight: 700; }
+
+/* Quill Overrides for Admin */
+.ql-container.ql-snow {
+  border: none !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+}
+.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  background: #f8fafc !important;
+  padding: 1rem !important;
+  border-radius: 1.5rem 1.5rem 0 0 !important;
+}
+.ql-editor {
+  min-height: 300px !important;
+  padding: 1.5rem !important;
+  color: #334155 !important;
+}
+.ql-editor.ql-blank::before {
+  color: #94a3b8 !important;
+  font-style: normal !important;
+}
