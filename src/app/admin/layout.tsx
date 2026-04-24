@@ -13,7 +13,8 @@ import {
   X, 
   ShieldCheck,
   ChevronRight,
-  FileText
+  FileText,
+  Mail
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -71,6 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "News & Events", icon: Newspaper, href: "/admin/content" },
     { name: "Team Directory", icon: Users, href: "/admin/team" },
     { name: "Institutional Resources", icon: FileText, href: "/admin/resources" },
+    { name: "Inquiries", icon: Mail, href: "/admin/submissions" },
     { name: "Media Gallery", icon: ImageIcon, href: "/admin/gallery" },
   ];
 
@@ -142,7 +144,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 mt-auto border-t border-white/10">
+        <div className="p-4 mt-auto border-t border-white/10 space-y-2">
+          <Link 
+            href="/"
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-emerald-100/60 hover:bg-white/5 hover:text-white transition-all group"
+          >
+            <ShieldCheck size={22} className="rotate-180" />
+            <span className={`font-medium text-sm transition-all duration-300 ${(!sidebarOpen && !isMobileMenuOpen) ? "lg:hidden opacity-0" : "opacity-100"}`}>
+              Exit to Public Site
+            </span>
+          </Link>
           <button 
             onClick={handleLogout}
             className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-emerald-100/40 hover:bg-red-500/10 hover:text-red-400 transition-all group"

@@ -56,7 +56,7 @@ export default function NewsDetailPage() {
       
       {/* Article Header */}
       <header className="pt-40 pb-20 px-6 bg-slate-50 relative overflow-hidden">
-        <div className="max-w-5xl mx-auto space-y-8 relative z-10">
+        <div className="max-w-4xl mx-auto space-y-8 relative z-10 overflow-hidden">
           <Link href="/news" className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:translate-x-[-4px] transition-transform">
             <ArrowLeft size={18} /> Back to Archive
           </Link>
@@ -71,8 +71,8 @@ export default function NewsDetailPage() {
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight">
-              {article.title}
+            <h1 className="text-2xl md:text-4xl font-black text-slate-900 leading-[1.1] tracking-tight">
+              {(article.title || "").replace(/&shy;|\u00AD|\u200B/g, "")}
             </h1>
             
             <div className="flex flex-wrap items-center gap-8 pt-4">
@@ -102,9 +102,14 @@ export default function NewsDetailPage() {
       {/* Featured Image */}
       <section className="px-6 -mt-10">
         <div className="max-w-5xl mx-auto">
-          <div className="aspect-[21/9] bg-emerald-950 rounded-[3rem] shadow-2xl overflow-hidden border-8 border-white">
+          <div className="aspect-[21/9] bg-emerald-950 rounded-[3rem] shadow-2xl overflow-hidden border-8 border-white relative">
             {article.image_url ? (
-              <img src={article.image_url} alt={article.title} className="w-full h-full object-cover" />
+              <img 
+                src={article.image_url} 
+                alt={article.title} 
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white/5">
                 <Newspaper size={120} />
@@ -115,12 +120,34 @@ export default function NewsDetailPage() {
       </section>
 
       {/* Article Content */}
-      <main className="max-w-5xl mx-auto px-6 py-24">
+      <main className="max-w-4xl mx-auto px-6 py-12 md:py-24 overflow-hidden">
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* Restore Institutional Bullet Points */
+          .rich-text-content ul {
+            list-style-type: disc !important;
+            padding-left: 1.5rem !important;
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+          }
+          .rich-text-content ol {
+            list-style-type: decimal !important;
+            padding-left: 1.5rem !important;
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+          }
+          .rich-text-content li {
+            display: list-item !important;
+            margin-bottom: 0.5rem !important;
+          }
+        `}} />
         <div className="">
-          {/* We'll render the content. If it contains newlines, we preserve them. */}
+          {/* We surgically strip invisible break characters AND convert non-breaking spaces to standard spaces so the browser can wrap naturally. */}
           <div 
-            className="rich-text-content text-lg leading-relaxed text-slate-700 space-y-6"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            className="rich-text-content text-sm md:text-base leading-relaxed text-slate-700 space-y-6"
+            dangerouslySetInnerHTML={{ __html: (article.content || "")
+              .replace(/&shy;|\u00AD|\u200B/g, "")
+              .replace(/&nbsp;/g, " ") 
+            }}
           />
         </div>
 

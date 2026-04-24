@@ -21,7 +21,7 @@ const quillModules = {
 const quillFormats = [
   'header',
   'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'list', 'bullet',
+  'list',
   'link', 'image',
 ];
 
@@ -113,39 +113,51 @@ export default function NewsEventsManager() {
     e.preventDefault();
     setSaving(true);
     
-    const { data: { session } } = await supabase.auth.getSession();
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
 
-    const postData = { 
-      title, 
-      content, 
-      type, 
-      status, 
-      image_url: imageUrl,
-      event_date: eventDate || null,
-      posted_by: postedBy,
-      author_id: session?.user?.id 
-    };
+      const postData = { 
+        title, 
+        content, 
+        type, 
+        status, 
+        image_url: imageUrl || null,
+        event_date: eventDate || null,
+        posted_by: postedBy || null,
+        author_id: session?.user?.id || null 
+      };
 
-    if (editingPost) {
-      const { error } = await supabase
-        .from("articles")
-        .update(postData)
-        .eq("id", editingPost.id);
-      
-      if (!error) {
-        setIsModalOpen(false);
-        resetForm();
-        fetchPosts();
+      if (editingPost) {
+        const { error } = await supabase
+          .from("articles")
+          .update(postData)
+          .eq("id", editingPost.id);
+        
+        if (!error) {
+          setIsModalOpen(false);
+          resetForm();
+          fetchPosts();
+        } else {
+          alert("Database Error. Check Console.");
+          console.log("Supabase Update Error Object:", error);
+        }
+      } else {
+        const { error } = await supabase.from("articles").insert([postData]);
+        if (!error) {
+          setIsModalOpen(false);
+          resetForm();
+          fetchPosts();
+        } else {
+          alert("Database Error. Check Console.");
+          console.log("Supabase Insert Error Object:", error);
+        }
       }
-    } else {
-      const { error } = await supabase.from("articles").insert([postData]);
-      if (!error) {
-        setIsModalOpen(false);
-        resetForm();
-        fetchPosts();
-      }
+    } catch (err: any) {
+      alert("System Error: " + err.message);
+      console.error("System Exception:", err);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -258,7 +270,7 @@ export default function NewsEventsManager() {
       {/* Create Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 backdrop-blur-md bg-emerald-950/20 overflow-y-auto">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-hidden animate-in zoom-in-95 duration-300 my-auto flex flex-col max-h-[90vh]">
+          <div className="bg-white w-[90vw] max-w-5xl min-h-[500px] max-h-[90vh] rounded-[2.5rem] shadow-2xl border border-emerald-100 overflow-auto resize animate-in zoom-in-95 duration-300 my-auto flex flex-col">
             <div className="p-6 md:p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50 shrink-0">
               <h2 className="text-xl md:text-2xl font-bold text-slate-900 font-outfit">
                 {editingPost ? "Edit Institutional Post" : "Create New Post"}
@@ -268,8 +280,8 @@ export default function NewsEventsManager() {
               </button>
             </div>
             
-            <form onSubmit={handleCreateOrUpdate} className="p-6 md:p-8 space-y-6 overflow-y-auto flex-1">
-              <div className="space-y-2">
+            <form onSubmit={handleCreateOrUpdate} className="p-6 md:p-8 space-y-6 flex-1 flex flex-col">
+              <div className="space-y-2 shrink-0">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Post Title</label>
                 <input 
                   required
@@ -280,7 +292,7 @@ export default function NewsEventsManager() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 shrink-0">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Content Type</label>
                   <select 
@@ -305,7 +317,7 @@ export default function NewsEventsManager() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 shrink-0">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Event/Post Date</label>
                   <input 
@@ -326,21 +338,26 @@ export default function NewsEventsManager() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1 flex flex-col min-h-[400px]">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Main Content (Rich Text)</label>
-                <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white min-h-[400px]">
+                <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white flex-1 flex flex-col">
                   <ReactQuill 
                     theme="snow"
                     value={content}
                     onChange={setContent}
                     modules={quillModules}
                     formats={quillFormats}
+                    className="flex-1 flex flex-col"
                     placeholder="Elaborate on the institutional pulse..."
                   />
+                  <style dangerouslySetInnerHTML={{ __html: `
+                    .ql-container { flex: 1; display: flex; flex-direction: column; height: auto !important; }
+                    .ql-editor { flex: 1; overflow-y: auto; }
+                  `}} />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 shrink-0">
                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Post Featured Image</label>
                 <div className="flex gap-4">
                   <input 

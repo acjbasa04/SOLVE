@@ -32,6 +32,10 @@ export default function LandingPage() {
   const [siteContent, setSiteContent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -474,15 +478,119 @@ export default function LandingPage() {
           </h2>
           <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">{cta.content}</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-            <button className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-5 px-12 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2">
-              <Mail size={22} /> Subscribe to Newsletter
-            </button>
-            <button className="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-900 font-bold py-5 px-12 rounded-2xl border border-slate-200 transition-all">
+            <div className="flex flex-col sm:flex-row gap-2 w-full max-w-md">
+              <input 
+                type="email" 
+                placeholder="your@email.edu.ph"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 bg-white border border-emerald-200 rounded-2xl py-4 px-6 text-slate-700 focus:outline-none focus:border-emerald-500 shadow-sm"
+              />
+              <button 
+                onClick={async () => {
+                  if (!email) return;
+                  setIsSubmitting(true);
+                  const { error } = await supabase.from('submissions').insert([{ type: 'newsletter', email }]);
+                  if (!error) {
+                    alert("Thank you! You've been added to our institutional mailing list.");
+                    setEmail("");
+                  }
+                  setIsSubmitting(false);
+                }}
+                disabled={isSubmitting}
+                className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition-all disabled:opacity-50"
+              >
+                {isSubmitting ? "..." : "Subscribe"}
+              </button>
+            </div>
+            <button 
+              onClick={() => setIsContactModalOpen(true)}
+              className="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-900 font-bold py-4 px-12 rounded-2xl border border-slate-200 transition-all shadow-sm"
+            >
               Contact Us
             </button>
           </div>
         </div>
       </section>
+
+      {/* Contact Modal */}
+      <AnimatePresence>
+        {isContactModalOpen && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsContactModalOpen(false)}
+              className="absolute inset-0 bg-emerald-950/40 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative z-10 w-full max-w-lg bg-white rounded-[3rem] p-10 shadow-2xl space-y-8"
+            >
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black text-slate-900 font-outfit">Get in <span className="text-emerald-700">Touch</span></h3>
+                <p className="text-slate-500">Submit an inquiry to the SOLVE Administrative Team.</p>
+              </div>
+
+              <div className="space-y-4">
+                <input 
+                  placeholder="Full Name"
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 focus:outline-none focus:border-emerald-500"
+                />
+                <input 
+                  placeholder="Official Email"
+                  type="email"
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 focus:outline-none focus:border-emerald-500"
+                />
+                <textarea 
+                  placeholder="How can we assist you?"
+                  rows={4}
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 focus:outline-none focus:border-emerald-500 resize-none"
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setIsContactModalOpen(false)}
+                  className="flex-1 py-4 border border-slate-200 rounded-2xl font-bold text-slate-500"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={async () => {
+                    if (!contactForm.email || !contactForm.message) return;
+                    setIsSubmitting(true);
+                    const { error } = await supabase.from('submissions').insert([{ 
+                      type: 'contact', 
+                      email: contactForm.email,
+                      message: `From: ${contactForm.name}\n\n${contactForm.message}`
+                    }]);
+                    if (!error) {
+                      alert("Message sent! The SOLVE team will get back to you soon.");
+                      setContactForm({ name: "", email: "", message: "" });
+                      setIsContactModalOpen(false);
+                    }
+                    setIsSubmitting(false);
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 py-4 bg-emerald-700 text-white rounded-2xl font-bold shadow-xl shadow-emerald-700/20 disabled:opacity-50"
+                >
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Image Lightbox Modal */}
       <AnimatePresence>
