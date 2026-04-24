@@ -128,11 +128,11 @@ export default function NewsEventsManager() {
         image_url: imageUrl || null,
         event_date: eventDate || null,
         posted_by: postedBy || null,
-        display_order: displayOrder !== "" ? parseInt(displayOrder.toString()) : null,
-        author_id: session?.user?.id || null 
+        display_order: displayOrder !== "" ? parseInt(displayOrder.toString()) : null
       };
 
       if (editingPost) {
+        // Do NOT update author_id on existing posts to avoid RLS conflicts
         const { error } = await supabase
           .from("articles")
           .update(postData)
@@ -147,7 +147,11 @@ export default function NewsEventsManager() {
           console.log("Supabase Update Error Object:", error);
         }
       } else {
-        const { error } = await supabase.from("articles").insert([postData]);
+        // Add author_id ONLY for new posts
+        const { error } = await supabase.from("articles").insert([{
+          ...postData,
+          author_id: session?.user?.id || null 
+        }]);
         if (!error) {
           setIsModalOpen(false);
           resetForm();
